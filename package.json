@@ -1,6 +1,7 @@
 {
   "name": "nextjs-imjoye",
   "version": "0.1.0",
+  "description": "nextjs-imjoye provides online chat on the web platform",
   "private": true,
   "scripts": {
     "dev": "next dev",
