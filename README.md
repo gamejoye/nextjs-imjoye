@@ -1,36 +1,20 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# NextJs IM即时聊天项目
 
-## Getting Started
+这是一个基于**NextJs**开发的即时通讯（IM）项目，旨在提供一个高效、可靠的即时消息交换平台。项目支持单聊、群聊等核心即时通讯功能，并专注于提供稳定的在线状态跟踪和离线消息处理。
 
-First, run the development server:
+## 待实现的基础功能
+- **好友申请**：用户之间可以发送好友请求
+- **创建群聊**：用户可以创建多人聊天室
+- **单聊**：用户之间可以进行私人对话，实时发送和接收消息。
+- **群聊**：群组内的成员可以互相发送和接收消息。
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 待优化的地方
+- **虚拟长列表**：虚拟长列表，按需加载列表信息
+- **连接可靠性**：通过心跳机制保证即使在用户闲置状态下也能保持连接不断开，提高系统的稳定性。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 部分功能效果图
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### 后端设置
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+后端代码位于 [nestjs-chat](https://github.com/gamejoye/nestjs-imjoye)，**请确保你在运行本项目之前正确启动了nestjs-chat项目**
