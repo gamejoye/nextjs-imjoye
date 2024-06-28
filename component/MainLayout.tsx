@@ -62,6 +62,7 @@ export default function MainLayout({
     setUser(null);
     setStatus('idle');
   }
+  const { colorBorderSecondary } = useToken()[1];
   const handleOnSelect = ({ key }: { key: string }) => {
     router.push(key);
   }
@@ -81,6 +82,7 @@ export default function MainLayout({
           bottom: 0,
           paddingTop: 16,
           paddingBottom: 16,
+          borderRight: `1px solid ${colorBorderSecondary}`,
         }}
         theme='light'
       >
@@ -109,7 +111,7 @@ export default function MainLayout({
           </Button>
         </div>
       </Sider>
-      <div style={{ marginLeft: siderWidth }}>
+      <div style={{ marginLeft: siderWidth, height: '100%', width: '100%' }}>
         {children}
       </div>
     </>
