@@ -3,13 +3,17 @@ import { AppServerApi } from "../appServerApi";
 
 export class WebAppServerApiImpl extends AppServerApi {
   apiBaseUrl: string;
-  constructor() {
+  userId: number;
+  token: string;
+  constructor(userId: number, token: string) {
     super();
     let apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
     if (apiBaseUrl[apiBaseUrl.length - 1] !== '/') {
       apiBaseUrl += '/';
     }
     this.apiBaseUrl = apiBaseUrl;
+    this.userId = userId;
+    this.token = token;
   }
 
   async __uploadWithUri<T>(
@@ -47,7 +51,6 @@ export class WebAppServerApiImpl extends AppServerApi {
       formData.append(name, value);
     }
 
-    console.log('formData: ', formData.get(name), name);
     const token = await this.getBearerToken();
     if (path[0] == '/') path = path.substring(1);
     path = this.apiBaseUrl + path;
@@ -92,6 +95,8 @@ export class WebAppServerApiImpl extends AppServerApi {
     const token = await this.getBearerToken();
     if (path[0] == '/') path = path.substring(1);
     path = this.apiBaseUrl + path;
+    console.log('path:', path);
+    console.log('token:', token);
     const res = await fetch(path, {
       method: 'GET',
       next: { revalidate: 60 },
@@ -126,8 +131,11 @@ export class WebAppServerApiImpl extends AppServerApi {
   }
 
   private async getBearerToken() {
-    const userInfo = await UserInfoUtil.getUserInfo();
-    const token = userInfo.authenticatedToken;
+    let token = this.token;
+    if (!token) {
+      const userInfo = await UserInfoUtil.getUserInfo();
+      token = userInfo.authenticatedToken;
+    }
     return 'Bearer ' + token;
   }
 }
