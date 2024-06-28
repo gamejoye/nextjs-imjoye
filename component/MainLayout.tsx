@@ -43,7 +43,7 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem('消息', '/message', <MessageOutlined />),
-  getItem('联系人', '/contact', <UserOutlined />),
+  getItem('通讯录', '/contact', <UserOutlined />),
   getItem('设置', '/setting', <SettingOutlined />),
 ];
 
