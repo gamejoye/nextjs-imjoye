@@ -36,6 +36,7 @@ export default function AuthLayout({
           width={48}
           height={48}
           style={{ marginRight: '16px', borderRadius: 50 }}
+          priority
         />
         <Text style={{ fontSize: '24px', margin: 0 }}>IMJoye</Text>
       </Header>
