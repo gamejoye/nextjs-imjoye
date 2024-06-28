@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { UserInfoUtil } from "@/utils/userInfo";
 import { usePathname, useRouter } from "next/navigation";
 import imjcManager from "@/imjc/imjc";
-import { initServer } from "@/utils/init";
+import { initClient } from "@/utils/client";
 import AuthLayout from "@/component/AuthLayout";
 import MainLayout from "@/component/MainLayout";
 
@@ -21,7 +21,7 @@ function App({
   const pathname = usePathname();
   const isAuthRoute = pathname.startsWith('/auth');
   useEffect(() => {
-    initServer();
+    initClient();
   }, []);
   useEffect(() => {
     const fetchUser = async () => {
