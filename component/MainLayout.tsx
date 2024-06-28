@@ -6,6 +6,7 @@ import { LogoutOutlined, MessageOutlined, SettingOutlined, UserOutlined } from '
 import { ReactNode } from 'react';
 import { useUser } from '@/app/user-provider';
 import { UserInfoUtil } from '@/utils/userInfo';
+import { usePathname, useRouter } from 'next/navigation';
 
 const { Sider } = Layout;
 
@@ -41,9 +42,9 @@ function getItem(
 
 
 const items: MenuItem[] = [
-  getItem('消息', '1', <MessageOutlined />),
-  getItem('联系人', '2', <UserOutlined />),
-  getItem('设置', '3', <SettingOutlined />),
+  getItem('消息', '/message', <MessageOutlined />),
+  getItem('联系人', '/contact', <UserOutlined />),
+  getItem('设置', '/setting', <SettingOutlined />),
 ];
 
 const siderWidth = 120;
@@ -53,12 +54,16 @@ export default function MainLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { colorBgContainer } = useToken()[1];
   const { user, setUser, setStatus } = useUser();
+  const pathname = usePathname();
+  const router = useRouter();
   const handleOnLogout = async () => {
     await UserInfoUtil.deleteUserInfo();
     setUser(null);
     setStatus('idle');
+  }
+  const handleOnSelect = ({ key }: { key: string }) => {
+    router.push(key);
   }
 
   return (
@@ -76,8 +81,8 @@ export default function MainLayout({
           bottom: 0,
           paddingTop: 16,
           paddingBottom: 16,
-          backgroundColor: colorBgContainer,
         }}
+        theme='light'
       >
         <div style={{ textAlign: 'center', marginBottom: '16px' }}>
           <Avatar
@@ -87,8 +92,9 @@ export default function MainLayout({
           />
         </div>
         <Menu
-          defaultSelectedKeys={['1']}
+          defaultSelectedKeys={[pathname]}
           items={items}
+          onSelect={handleOnSelect}
         />
         <div style={{ position: 'absolute', bottom: 16, width: '100%', textAlign: 'center' }}>
           <Button
