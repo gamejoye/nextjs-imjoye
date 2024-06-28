@@ -1,3 +1,5 @@
+export type FriendshipType = 'PENDING' | 'ACCEPT' | 'REJECT';
+
 export class Chatroom {
   id: number;
   type: 'SINGLE' | 'MULTIPLE';
