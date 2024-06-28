@@ -1,9 +1,5 @@
+import { UserInfo } from '@/types/global';
 import Cookies from 'js-cookie';
-
-export class UserInfo {
-  'authenticatedToken': string;
-  'userId': number;
-}
 
 class UserInfoUtil {
   userInfo: string;

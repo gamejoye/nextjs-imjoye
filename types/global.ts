@@ -1,5 +1,10 @@
 export type FriendshipType = 'PENDING' | 'ACCEPT' | 'REJECT';
 
+export class UserInfo {
+  'authenticatedToken': string;
+  'userId': number;
+}
+
 export class Chatroom {
   id: number;
   type: 'SINGLE' | 'MULTIPLE';
