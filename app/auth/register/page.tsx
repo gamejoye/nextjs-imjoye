@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Upload, Avatar, GetProp, UploadProps, message, Typography } from 'antd';
-import { initServer } from '@/utils/init';
+import { Form, Input, Button, Upload, Avatar, message, Typography } from 'antd';
+import { initClient } from '@/utils/client';
 import { Content } from 'antd/es/layout/layout';
 import { RcFile, UploadChangeParam, UploadFile } from 'antd/es/upload';
 import appServerApi from '@/api/appServerApi';
@@ -19,7 +19,7 @@ export default function Register() {
   const router = useRouter();
 
   useEffect(() => {
-    initServer();
+    initClient();
   }, []);
 
   const onFinish = async ({
