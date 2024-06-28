@@ -5,9 +5,11 @@ import { Layout, message, Spin } from "antd";
 import { UserProvider, useUser } from "./user-provider";
 import { useEffect } from "react";
 import { UserInfoUtil } from "@/utils/userInfo";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import imjcManager from "@/imjc/imjc";
 import { initServer } from "@/utils/init";
+import AuthLayout from "@/component/AuthLayout";
+import MainLayout from "@/component/MainLayout";
 
 function App({
   children,
@@ -16,6 +18,8 @@ function App({
 }>) {
   const { status, setUser, setStatus } = useUser();
   const router = useRouter();
+  const pathname = usePathname();
+  const isAuthRoute = pathname.startsWith('/auth');
   useEffect(() => {
     initServer();
   }, []);
@@ -29,7 +33,6 @@ function App({
       if (status === 'idle') {
         let success = true;
         setStatus('loading');
-        await new Promise((resolve) => setTimeout(resolve, 5000));
         const user = await imjcManager.getUserFromRemote(userId, async (err) => {
           await UserInfoUtil.deleteUserInfo();
           message.error('获取用户信息失败，请重新登录！');
@@ -50,7 +53,10 @@ function App({
 
   let layout = (
     <Layout style={{ minHeight: '100vh', fontFamily: 'Hiragino Sans GB' }}>
-      {children}
+      {isAuthRoute
+        ? <AuthLayout>{children}</AuthLayout>
+        : <MainLayout>{children}</MainLayout>
+      }
     </Layout>
   );
   if (status === 'loading') {
