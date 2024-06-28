@@ -67,6 +67,9 @@ export default function MainLayout({
     router.push(key);
   }
 
+  const keys = pathname.split('/');
+  let selectedKey = '/' + (keys.find((key) => (key === 'message' || key === 'contact' || key === 'setting')) || '');
+
   return (
     <>
       <Sider
@@ -94,7 +97,7 @@ export default function MainLayout({
           />
         </div>
         <Menu
-          defaultSelectedKeys={[pathname]}
+          defaultSelectedKeys={[selectedKey]}
           items={items}
           onSelect={handleOnSelect}
         />
