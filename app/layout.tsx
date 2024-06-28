@@ -1,7 +1,7 @@
 'use client';
 
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { Layout, message, Spin } from "antd";
+import { ConfigProvider, Layout, message, Spin, theme as antdTheme } from "antd";
 import { UserProvider, useUser } from "./user-provider";
 import { useEffect } from "react";
 import { UserInfoUtil } from "@/utils/userInfo";
@@ -10,6 +10,7 @@ import imjcManager from "@/imjc/imjc";
 import { initClient } from "@/utils/client";
 import AuthLayout from "@/component/AuthLayout";
 import MainLayout from "@/component/MainLayout";
+import { useTheme } from "./theme-provider";
 
 function App({
   children,
@@ -17,6 +18,7 @@ function App({
   children: React.ReactNode;
 }>) {
   const { status, setUser, setStatus } = useUser();
+  const { theme } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
   const isAuthRoute = pathname.startsWith('/auth');
@@ -52,7 +54,12 @@ function App({
   }, [status, setUser, setStatus, router]);
 
   let layout = (
-    <Layout style={{ minHeight: '100vh', fontFamily: 'Hiragino Sans GB' }}>
+    <Layout
+      style={{
+        minHeight: '100vh',
+        fontFamily: 'Hiragino Sans GB'
+      }}
+    >
       {isAuthRoute
         ? <AuthLayout>{children}</AuthLayout>
         : <MainLayout>{children}</MainLayout>
@@ -71,7 +78,13 @@ function App({
   }
   return (
     <AntdRegistry>
-      {layout}
+      <ConfigProvider
+        theme={{
+          algorithm: theme === 'dark' ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm
+        }}
+      >
+        {layout}
+      </ConfigProvider>
     </AntdRegistry>
   )
 }
@@ -84,9 +97,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body style={{ padding: 0, margin: 0 }}>
-        <UserProvider>
-          <App>{children}</App>
-        </UserProvider>
+        <ConfigProvider>
+          <UserProvider>
+            <App>{children}</App>
+          </UserProvider>
+        </ConfigProvider>
       </body>
     </html>
   );
