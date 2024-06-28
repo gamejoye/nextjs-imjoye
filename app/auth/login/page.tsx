@@ -8,11 +8,14 @@ import { isOk } from '@/api/web/issuccess';
 import { UserInfoUtil } from '@/utils/userInfo';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import imjcManager from '@/imjc/imjc';
+import { useUser } from '@/app/user-provider';
 const { Content } = Layout;
 const { Text } = Typography;
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
+  const { setUser, setStatus } = useUser();
   const router = useRouter();
   useEffect(() => {
     initServer();
@@ -25,16 +28,26 @@ export default function Login() {
     });
     setIsLoading(false);
     const { statusCode, data, message: resMessage } = res;
-    if (isOk(statusCode)) {
-      message.success('登录成功');
-      await UserInfoUtil.storeUserInfo({
-        userId: data.id,
-        authenticatedToken: data.token,
-      });
-      router.push('/');
-    } else {
+    if (!isOk(statusCode)) {
       message.error(`登录失败: ${resMessage}`);
+      return;
     }
+    await UserInfoUtil.storeUserInfo({
+      userId: data.id,
+      authenticatedToken: data.token,
+    });
+    let success = true;
+    const user = await imjcManager.getUserFromRemote(data.id, (err) => {
+      success = false;
+      message.error(`获取用户信息失败`);
+      setUser(null);
+      setStatus('fail');
+    })
+    if (!success) return;
+    router.push('/');
+    message.success('登录成功');
+    setUser(user);
+    setStatus('success');
   };
 
   return (
