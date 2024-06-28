@@ -3,13 +3,24 @@
 import { User } from '@/types/global';
 import { createContext, useContext, useState } from 'react'
 
-export const ThemeContext = createContext({})
+type Status = 'idle' | 'loading' | 'success' | 'fail';
 
-const UserContext = createContext<{ 
-  user: User | null,
-  status: 'idle' | 'loading' | 'success' | 'fail',
-  setUser: (user: User | null) => void,
-}>(null as any);
+interface UserContextType {
+  user: User | null;
+  status: Status;
+  setUser: (user: User | null) => void;
+  setStatus: (status: 'idle' | 'loading' | 'success' | 'fail') => void;
+}
+
+const defaultUserDispatch = (user: User | null) => {};
+const defaultStatusDispatch = (status: Status) => {};
+
+const UserContext = createContext<UserContextType>({
+  user: null,
+  setUser: defaultUserDispatch,
+  status: 'idle',
+  setStatus: defaultStatusDispatch
+});
 
 export function UserProvider({
   children
@@ -17,9 +28,9 @@ export function UserProvider({
   children: React.ReactNode
 }) {
   const [user, setUser] = useState<User | null>(null);
-
+  const [status, setStatus] = useState<Status>('idle');
   return (
-    <UserContext.Provider value={{ user, status: 'idle', setUser }}>
+    <UserContext.Provider value={{ user, status, setUser, setStatus }}>
       {children}
     </UserContext.Provider>
   );
