@@ -1,7 +1,7 @@
 import { MessageOutlined } from "@ant-design/icons";
 import { Result } from "antd";
 import { Content } from "antd/es/layout/layout";
-export default function Message() {
+export default function MessagePage() {
   return (
     <Content
       style={{
