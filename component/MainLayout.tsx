@@ -4,9 +4,9 @@ import { Avatar, Button, Layout, Menu, MenuProps } from 'antd';
 import useToken from 'antd/es/theme/useToken';
 import { LogoutOutlined, MessageOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { ReactNode } from 'react';
-import { useUser } from '@/app/user-provider';
 import { UserInfoUtil } from '@/utils/userInfo';
 import { usePathname, useRouter } from 'next/navigation';
+import { useUser } from './UserProvider';
 
 const { Sider } = Layout;
 

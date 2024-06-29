@@ -1,4 +1,4 @@
-import { PropsWithChildren, createContext, useContext, useState } from 'react';
+import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react';
 
 type Theme = 'light' | 'dark';
 interface ThemeContext {
@@ -10,9 +10,19 @@ const ThemeContext = createContext<ThemeContext>({
   theme: 'light',
   setTheme: defaultDispatch,
 });
+
+export const useTheme = () => {
+  return useContext(ThemeContext);
+};
+
+/// ------------------------------------------------------------
+
 const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const themeFromLocal = (localStorage.getItem('theme') || 'light') as Theme;
-  const [theme, setTheme] = useState<Theme>(themeFromLocal);
+  const [theme, setTheme] = useState<Theme>('light');
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) setTheme(savedTheme as Theme);
+  }, []);
   const wrappedSetTheme = (theme: Theme) => {
     localStorage.setItem('theme', theme);
     setTheme(theme);
@@ -22,10 +32,6 @@ const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
       {children}
     </ThemeContext.Provider>
   );
-};
-
-export const useTheme = () => {
-  return useContext(ThemeContext);
 };
 
 export default ThemeProvider;

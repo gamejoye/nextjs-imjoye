@@ -9,7 +9,7 @@ import { UserInfoUtil } from '@/utils/userInfo';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import imjcManager from '@/imjc/imjc';
-import { useUser } from '@/app/user-provider';
+import { useUser } from '@/component/UserProvider';
 const { Content } = Layout;
 const { Text } = Typography;
 
