@@ -74,6 +74,7 @@ function Logic({
 
   let layout = (
     <Layout
+      hasSider={isAuthRoute ? false : true}
       style={{
         minHeight: '100vh',
         fontFamily: 'Hiragino Sans GB'

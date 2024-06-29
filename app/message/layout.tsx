@@ -16,7 +16,7 @@ export default async function MessageLayout({
     message.error('获取聊天信息失败' + err.message);
   });
   return (
-    <Layout style={{ minHeight: '100vh', fontFamily: 'Hiragino Sans GB' }}>
+    <Layout hasSider style={{ height: '100vh' }}>
       <Sider
         width={siderWidth}
         style={{
