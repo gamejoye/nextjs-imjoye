@@ -75,14 +75,9 @@ export default function MainLayout({
       <Sider
         width={siderWidth}
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'auto',
+          overflowY: 'auto',
           height: '100vh',
           position: 'fixed',
-          left: 0,
-          top: 0,
-          bottom: 0,
           paddingTop: 16,
           paddingBottom: 16,
           borderRight: `1px solid ${colorBorderSecondary}`,
