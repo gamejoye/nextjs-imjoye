@@ -1,33 +1,21 @@
-import { ChatroomSummaryList } from "@/component/ChatroomSummaryList";
-import imjcManager from "@/imjc/imjc";
-import { initServer } from "@/utils/server";
-import { Layout, message } from "antd";
+import { MessageOutlined } from "@ant-design/icons";
+import { Result } from "antd";
 import { Content } from "antd/es/layout/layout";
-import Sider from "antd/es/layout/Sider";
-
-const siderWidth = 300;
-
-export default async function Message() {
-  initServer();
-  const summaries = await imjcManager.getChatroomSummariesFromRemote(1, (err) => {
-    message.error('获取聊天信息失败' + err.message);
-  });
+export default function Message() {
   return (
-    <Layout style={{ minHeight: '100vh', fontFamily: 'Hiragino Sans GB' }}>
-      <Sider
-        width={siderWidth}
-        style={{
-          overflowY: 'auto',
-          height: '100vh',
-          position: 'fixed',
-        }}
-        theme="light"
-      >
-        <ChatroomSummaryList summaries={summaries} />
-      </Sider>
-      <Content style={{ marginLeft: siderWidth }}>
-        聊天框
-      </Content>
-    </Layout>
+    <Content
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        height: '100%',
+      }}
+    >
+      <Result
+        icon={<MessageOutlined />}
+        title="找个小伙伴一起聊天吧～"
+      />
+    </Content>
   )
 }
