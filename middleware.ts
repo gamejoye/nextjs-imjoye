@@ -7,7 +7,7 @@ export function middleware(
   const tokenCookie = cookies.get('authenticatedToken');
 
   if (tokenCookie && request.nextUrl.pathname.startsWith('/auth')) {
-    return Response.redirect(new URL('/', request.url));
+    return Response.redirect(new URL('/message', request.url));
   }
 
   if (!tokenCookie && !request.nextUrl.pathname.startsWith('/auth')) {

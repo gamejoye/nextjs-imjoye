@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import imjcManager from '@/imjc/imjc';
 import { useUser } from '@/component/UserProvider';
+import useToken from 'antd/es/theme/useToken';
 const { Content } = Layout;
 const { Text } = Typography;
 
@@ -17,6 +18,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const { setUser, setStatus } = useUser();
   const router = useRouter();
+  const { colorBgContainer } = useToken()[1];
   useEffect(() => {
     initClient();
   }, []);
@@ -44,7 +46,7 @@ export default function Login() {
       setStatus('fail');
     })
     if (!success) return;
-    router.push('/');
+    router.push('/message');
     message.success('登录成功');
     setUser(user);
     setStatus('success');
@@ -52,7 +54,7 @@ export default function Login() {
 
   return (
     <Content style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '50px' }}>
-      <div style={{ width: '300px', padding: '24px', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+      <div style={{ width: '300px', padding: '24px', backgroundColor: colorBgContainer, borderRadius: '8px' }}>
         <Text strong style={{ display: 'block', textAlign: 'center', fontSize: '20px', marginBottom: '24px', fontFamily: 'Roboto, sans-serif' }}>快速登录</Text>
         <Form
           name="login"

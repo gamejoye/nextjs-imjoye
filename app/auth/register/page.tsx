@@ -10,6 +10,7 @@ import { isCreated } from '@/api/web/issuccess';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { UserOutlined } from '@ant-design/icons';
+import useToken from 'antd/es/theme/useToken';
 const { Text } = Typography;
 
 export default function Register() {
@@ -17,6 +18,7 @@ export default function Register() {
   const [previewUrl, setPreviewUrl] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();
+  const { colorBgContainer } = useToken()[1];
 
   useEffect(() => {
     initClient();
@@ -78,7 +80,7 @@ export default function Register() {
 
   return (
     <Content style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '50px' }}>
-      <div style={{ width: '300px', padding: '24px', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', borderRadius: '8px' }}>
+      <div style={{ width: '300px', padding: '24px', backgroundColor: colorBgContainer, borderRadius: '8px' }}>
         <Text strong style={{ display: 'block', textAlign: 'center', fontSize: '20px', marginBottom: '24px', fontFamily: 'Roboto, sans-serif' }}>注册</Text>
         <Form
           name="register"
