@@ -11,9 +11,14 @@ const ThemeContext = createContext<ThemeContext>({
   setTheme: defaultDispatch,
 });
 const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>('light');
+  const themeFromLocal = (localStorage.getItem('theme') || 'light') as Theme;
+  const [theme, setTheme] = useState<Theme>(themeFromLocal);
+  const wrappedSetTheme = (theme: Theme) => {
+    localStorage.setItem('theme', theme);
+    setTheme(theme);
+  }
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme: wrappedSetTheme }}>
       {children}
     </ThemeContext.Provider>
   );

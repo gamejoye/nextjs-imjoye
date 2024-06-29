@@ -10,7 +10,7 @@ import imjcManager from "@/imjc/imjc";
 import { initClient } from "@/utils/client";
 import AuthLayout from "@/component/AuthLayout";
 import MainLayout from "@/component/MainLayout";
-import { useTheme } from "./theme-provider";
+import ThemeProvider, { useTheme } from "./theme-provider";
 
 function App({
   children,
@@ -99,7 +99,9 @@ export default function RootLayout({
       <body style={{ padding: 0, margin: 0 }}>
         <ConfigProvider>
           <UserProvider>
-            <App>{children}</App>
+            <ThemeProvider>
+              <App>{children}</App>
+            </ThemeProvider>
           </UserProvider>
         </ConfigProvider>
       </body>
