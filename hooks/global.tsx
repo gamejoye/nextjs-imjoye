@@ -12,22 +12,25 @@ type Status = 'idle' | 'loading' | 'success' | 'fail';
 
 const checkLoading = (status: Status) => ['idle', 'loading'].some(s => s === status);
 
-
-export const useTheme = () => {
-  return useContext(ThemeContext);
-};
-
-export function useUser() {
-  return useContext(UserContext);
-}
-
 export function useClient() {
   useEffect(() => {
     initClient();
   }, []);
 }
 
+export const useTheme = () => {
+  useClient();
+  return useContext(ThemeContext);
+};
+
+export function useUser() {
+  useClient();
+  return useContext(UserContext);
+}
+
+
 export function useChatroomSummaries() {
+  useClient();
   return useContext(ChatroomSummariesContext);
 }
 
@@ -37,6 +40,12 @@ export function useMessages(summary: ChatroomSummary) {
   const [queryStatus, setQueryStatus] = useState<Status>('idle');
   const [mutativeStatus, setMutativeStatus] = useState<Status>('idle');
   const [messages, setMessages] = useState<Message[]>([]);
+
+  const setNewMessage = (message: Message) => {
+    const msgSorter = (m1: Message, m2: Message) => new Date(m1.createTime).getTime() - new Date(m2.createTime).getTime();
+    const newMessages = [...messages, message].sort(msgSorter);
+    setMessages(newMessages);
+  }
 
   const send = async (content: string) => {
     if (content.trim() === '') {
@@ -53,7 +62,7 @@ export function useMessages(summary: ChatroomSummary) {
     );
     setMutativeStatus('loading');
     let success = true;
-    const sentMessage = await imjcManager
+    await imjcManager
       .sendMessage(
         partialMessage,
         (err) => {
@@ -62,7 +71,6 @@ export function useMessages(summary: ChatroomSummary) {
       );
     if (success) {
       setMutativeStatus('success');
-      setMessages([...messages, sentMessage]);
     } else {
       setMutativeStatus('fail');
     }
@@ -82,7 +90,7 @@ export function useMessages(summary: ChatroomSummary) {
       );
     if (found) {
       setQueryStatus('success');
-      setMessages([...messages.reverse(), ...messages]);
+      setMessages([...messages.reverse()]);
     } else {
       setQueryStatus('fail');
     }
@@ -95,6 +103,7 @@ export function useMessages(summary: ChatroomSummary) {
   return {
     messages,
     send,
+    setNewMessage,
     isQueryLoading: checkLoading(status) || checkLoading(queryStatus),
     isQueryError: status === 'fail' || queryStatus === 'fail',
     isMutativeLoading: checkLoading(status) || checkLoading(queryStatus) || checkLoading(mutativeStatus),
