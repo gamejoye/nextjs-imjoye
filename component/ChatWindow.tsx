@@ -7,12 +7,14 @@ import { Content, Footer, Header } from "antd/es/layout/layout";
 import useToken from "antd/es/theme/useToken";
 import Title from "antd/es/typography/Title";
 import { useChatroomSummaries, useMessages } from "@/hooks/global";
-import { ChatroomSummary } from "@/types/global";
+import { ChatroomSummary, Message } from "@/types/global";
 import { MessageOutlined, UploadOutlined, UserOutlined } from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
 import { KeyboardEvent, useEffect, useRef, useState } from "react";
 import { useUser } from '@/hooks/global';
 import { getCurrentDatetime } from "@/utils/datetime";
+import eventEmitter from "@/imjc/emitter";
+import { EventType } from "@/imjc/constant/EventType";
 
 type Prop = {
   summary: ChatroomSummary,
@@ -23,6 +25,7 @@ export function ChatWindow({
 }: Prop) {
   const {
     messages,
+    setNewMessage,
     send,
     isQueryLoading,
   } = useMessages(summary);
@@ -35,7 +38,20 @@ export function ChatWindow({
   const [content, setContent] = useState('');
   const { colorBgContainer, colorBorderSecondary } = useToken()[1];
   const messageEndRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
+    // messages 依赖项防止过期闭包
+    const newMessageHandle = (message: Message) => {
+      setNewMessage(message);
+    };
+    // 处理新消息
+    eventEmitter.on(EventType.NEW_MESSAGE, newMessageHandle);
+    return () => {
+      eventEmitter.off(EventType.NEW_MESSAGE, newMessageHandle);
+    };
+  }, [messages]);
+  useEffect(() => {
+    // 离开聊天室更新 访问时间
     return () => {
       if (user) {
         imjcManager.quitChatroom(
@@ -49,6 +65,7 @@ export function ChatWindow({
     }
   }, []);
   useEffect(() => {
+    // summaries loading 逻辑
     if (!isSummariesQueryLoading) {
       const updatedSummaries = summaries
         .map(oldSummary => {
@@ -63,6 +80,7 @@ export function ChatWindow({
     }
   }, [isSummariesQueryLoading]);
   useEffect(() => {
+    // 消息滑动
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
