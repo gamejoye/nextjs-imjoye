@@ -8,7 +8,7 @@ class UserInfoUtil {
     this.userInfo = 'userInfo';
   }
 
-  async getUserInfo(): Promise<UserInfo> {
+  getUserInfo(): UserInfo {
     // const userId = parseInt(localStorage.getItem('userId') || '-1');
     // const authenticatedToken = localStorage.getItem('authenticatedToken') || '';
     const userId = parseInt(Cookies.get('userId') || '-1');
@@ -20,7 +20,7 @@ class UserInfoUtil {
     return userInfo;
   }
 
-  async storeUserInfo(userInfo: UserInfo) {
+  storeUserInfo(userInfo: UserInfo) {
     // const authenticatedToken = userInfo.authenticatedToken;
     // const userId = userInfo.userId;
     const { userId, authenticatedToken } = userInfo;
@@ -28,7 +28,7 @@ class UserInfoUtil {
     Cookies.set('authenticatedToken', authenticatedToken + '');
   }
 
-  async deleteUserInfo() {
+  deleteUserInfo() {
     // localStorage.removeItem('userId');
     // localStorage.removeItem('authenticatedToken');
     Cookies.remove('userId');
