@@ -1,20 +1,24 @@
+import { ChatroomSummariesContext } from "@/component/ChatroomSummariesProvider";
 import { useUser } from "@/component/UserProvider";
 import imjcManager from "@/imjc/imjc";
 import { ChatroomSummary, Message, User } from "@/types/global";
 import { initClient } from "@/utils/client";
 import { getCurrentDatetime } from "@/utils/datetime";
-import { useEffect, useState } from "react";
+import { message } from "antd";
+import { useContext, useEffect, useState } from "react";
 
 type Status = 'idle' | 'loading' | 'success' | 'fail';
 
 const checkLoading = (status: Status) => ['idle', 'loading'].some(s => s === status);
 
-// const messageSorter = (msg1: Message, msg2: Message) => (new Date())
-
 export function useClient() {
   useEffect(() => {
     initClient();
   }, []);
+}
+
+export function useChatroomSummaries() {
+  return useContext(ChatroomSummariesContext);
 }
 
 export function useMessages(summary: ChatroomSummary) {
@@ -25,6 +29,10 @@ export function useMessages(summary: ChatroomSummary) {
   const [messages, setMessages] = useState<Message[]>([]);
 
   const send = async (content: string) => {
+    if (content.trim() === '') {
+      message.warning('发送消息不能为空哦～');
+      return;
+    }
     const partialMessage = new Message(
       undefined,
       undefined,

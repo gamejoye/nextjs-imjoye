@@ -2,15 +2,17 @@
 
 import { MessageList, MessageListSkeleton } from "@/component/MessageList";
 import imjcManager from "@/imjc/imjc";
-import { Avatar, Button, Divider, Input, Layout, message, Space } from "antd";
+import { Avatar, Button, Divider, Layout, message, Space } from "antd";
 import { Content, Footer, Header } from "antd/es/layout/layout";
 import useToken from "antd/es/theme/useToken";
 import Title from "antd/es/typography/Title";
-import { useMessages } from "@/hooks/global";
+import { useChatroomSummaries, useMessages } from "@/hooks/global";
 import { ChatroomSummary } from "@/types/global";
 import { MessageOutlined, UploadOutlined, UserOutlined } from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
 import { KeyboardEvent, useEffect, useRef, useState } from "react";
+import { useUser } from "./UserProvider";
+import { getCurrentDatetime } from "@/utils/datetime";
 
 type Prop = {
   summary: ChatroomSummary,
@@ -24,18 +26,50 @@ export function ChatWindow({
     send,
     isQueryLoading,
   } = useMessages(summary);
+  const {
+    summaries,
+    setSummaries,
+    isQueryLoading: isSummariesQueryLoading,
+  } = useChatroomSummaries();
+  const { user } = useUser();
   const [content, setContent] = useState('');
   const { colorBgContainer, colorBorderSecondary } = useToken()[1];
   const messageEndRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    return () => {
+      if (user) {
+        imjcManager.quitChatroom(
+          user.id,
+          summary.chatroom.id,
+          (err) => {
+            message.error('更新聊天室信息失败：' + err.message);
+          }
+        );
+      }
+    }
+  }, []);
+  useEffect(() => {
+    if (!isSummariesQueryLoading) {
+      const updatedSummaries = summaries
+        .map(oldSummary => {
+          if (oldSummary.chatroom.id !== summary.chatroom.id) return oldSummary;
+          return {
+            ...summary,
+            unreadMessageCount: 0,
+            latestVisitTime: getCurrentDatetime(),
+          };
+        });
+      setSummaries(updatedSummaries);
+    }
+  }, [isSummariesQueryLoading]);
   useEffect(() => {
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
   const handleOnSubmit = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (content === '') return;
-    if (e.shiftKey) return;
     e.preventDefault();
+    if (e.shiftKey) return;
     if (e.key === 'Enter') {
       send(content);
       setContent('');

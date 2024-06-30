@@ -1,22 +1,36 @@
 'use client';
 
+import { useChatroomSummaries } from "@/hooks/global";
 import { ChatroomSummary } from "@/types/global"
-import { Avatar, Badge, Empty, List, Typography } from "antd"
+import { Avatar, Badge, Empty, List, Skeleton, Typography } from "antd"
 import { usePathname, useRouter } from "next/navigation";
 
-type Props = {
-  summaries: ChatroomSummary[],
-}
-
-export function ChatroomSummaryList({
-  summaries,
-}: Props) {
+export function ChatroomSummaryList() {
   const router = useRouter();
   const pathname = usePathname();
   const selectId = parseInt(pathname.substring(pathname.lastIndexOf('/') + 1));
+  const {
+    summaries,
+    isQueryLoading,
+  } = useChatroomSummaries();
 
   const handleOnClick = (summary: ChatroomSummary) => {
     router.push(`/message/${summary.chatroom.id}`);
+  }
+
+  if (isQueryLoading) {
+    const filler = new Array(10).fill(0, 0, 10);
+    return (
+      <List
+        itemLayout="horizontal"
+        dataSource={filler}
+        renderItem={() => (
+          <List.Item>
+            <Skeleton avatar active paragraph={{ rows: 1 }} />
+          </List.Item>
+        )}
+      />
+    )
   }
 
   return (
@@ -33,7 +47,6 @@ export function ChatroomSummaryList({
           ),
         }}
         renderItem={(summary) => {
-          console.log(summary.chatroom)
           const isSelected = selectId === summary.chatroom.id
           return (
             <List.Item

@@ -1,36 +1,35 @@
+'use client';
+
+import ChatroomSummariesProvider from "@/component/ChatroomSummariesProvider";
 import { ChatroomSummaryList } from "@/component/ChatroomSummaryList";
-import imjcManager from "@/imjc/imjc";
-import { initServer } from "@/utils/server";
-import { Layout, message } from "antd";
+import { Layout } from "antd";
 import Sider from "antd/es/layout/Sider";
 
 const siderWidth = 300;
 
-export default async function MessageLayout({
+export default function MessageLayout({
   children
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  initServer();
-  const summaries = await imjcManager.getChatroomSummariesFromRemote(1, (err) => {
-    message.error('获取聊天信息失败' + err.message);
-  });
   return (
-    <Layout hasSider style={{ height: '100vh' }}>
-      <Sider
-        width={siderWidth}
-        style={{
-          overflowY: 'auto',
-          height: '100vh',
-          position: 'fixed',
-        }}
-        theme="light"
-      >
-        <ChatroomSummaryList summaries={summaries} />
-      </Sider>
-      <div style={{ marginLeft: siderWidth, width: '100%' }}>
-        {children}
-      </div>
-    </Layout>
+    <ChatroomSummariesProvider>
+      <Layout hasSider style={{ height: '100vh' }}>
+        <Sider
+          width={siderWidth}
+          style={{
+            overflowY: 'auto',
+            height: '100vh',
+            position: 'fixed',
+          }}
+          theme="light"
+        >
+          <ChatroomSummaryList />
+        </Sider>
+        <div style={{ marginLeft: siderWidth, width: '100%' }}>
+          {children}
+        </div>
+      </Layout>
+    </ChatroomSummariesProvider>
   )
 }
