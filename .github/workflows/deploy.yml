@@ -25,11 +25,13 @@ jobs:
           SOURCE: '.'
           REMOTE_HOST: imjoye.chat
           REMOTE_USER: root
+          EXCLUDE: 'node_modules/'
           TARGET: '/usr/local/chat/web'
           SCRIPT_BEFORE: |
             whoami
             ls -al
           SCRIPT_AFTER: |
+            cd /usr/local/chat/web
             whoami
             ls -al
             cnpm install
