@@ -44,9 +44,6 @@ function Logic({
   const pathname = usePathname();
   const isAuthRoute = pathname.startsWith('/auth');
   useEffect(() => {
-    initClient();
-  }, []);
-  useEffect(() => {
     const fetchUser = async () => {
       const { userId, authenticatedToken } = await UserInfoUtil.getUserInfo();
       if (!authenticatedToken) {
