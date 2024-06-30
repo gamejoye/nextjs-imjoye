@@ -1,20 +1,33 @@
 import { IEventEmitter } from '../interface/EventEmitter.interface';
-import { EventType } from '../constant/EventType';
+import { EventType as EmitterEventType } from '../constant/EventType';
+import mitt, { Emitter, EventType } from 'mitt';
 
-export default class EventEmitter implements IEventEmitter {
+const emitterImpl: Emitter<Record<EventType, Array<Object>>> = mitt();
+const callbackMap: Map<Function, Function> = new Map();
+
+export default class WebEventEmitter implements IEventEmitter {
+  
   constructor() {
-    // this.context = context;
   }
 
-  emit(event: EventType, ...args: Object[]): void {
-    // this.context.eventHub.emit(event + '', ...args);
+  emit(event: EmitterEventType, ...args: Object[]): void {
+    emitterImpl.emit(event + '', args);
   }
 
-  on(event: EventType, callback: (...args: Object[]) => void): void {
-    // this.context.eventHub.on(event + '', callback);
+  on(event: EmitterEventType, callback: (...args: Object[]) => void): void {
+    const wrappedCallback = (e: Array<Object>) => callback(...e);
+    emitterImpl.on(event + '', wrappedCallback);
+    callbackMap.set(callback, wrappedCallback);
   }
 
-  off(event: EventType, callback?: (...args: Object[]) => void): void {
-    // this.context.eventHub.off(event + '', callback);
+  off(event: EmitterEventType, callback?: (...args: Object[]) => void): void {
+    if (callback !== undefined) {
+      if (callbackMap.has(callback)) {
+        const wrappedCallback = callbackMap.get(callback) as (e: Array<Object>) => void;
+        emitterImpl.off(event + '', wrappedCallback);
+      }
+    } else {
+      emitterImpl.off(event + '');
+    }
   }
 }
