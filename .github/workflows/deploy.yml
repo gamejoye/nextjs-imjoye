@@ -25,7 +25,7 @@ jobs:
           SOURCE: '.'
           REMOTE_HOST: imjoye.chat
           REMOTE_USER: root
-          TARGET: '/usr/local/chat'
+          TARGET: '/usr/local/chat/web'
           SCRIPT_BEFORE: |
             whoami
             ls -al
