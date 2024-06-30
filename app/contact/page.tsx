@@ -1,8 +1,4 @@
-export default function Contact({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function Contact() {
   return (
     <div>Contact Root</div>
   )

@@ -16,7 +16,7 @@ export default class WebIMJCManagerImpl implements IBaseIMJCManager {
   connectionStatus: ConnectionStatus = ConnectionStatus.Idle;
   serverApi: AppServerApi;
   eventEmitter: EventEmitter;
-  ws: WebSocket;
+  ws!: WebSocket;
 
   constructor(
     serverApi: AppServerApi,
@@ -301,15 +301,10 @@ export default class WebIMJCManagerImpl implements IBaseIMJCManager {
       }
     }
     this.ws.onopen = (event) => {
-      this.ws.send('Authorization: Bearer ' + token);
-      // socket.send('Authorization: Bearer ' + YOUR_TOKEN);
-      console.log('ws连接成功', event);
     }
     this.ws.onerror = (event) => {
-      console.log('ws连接失败', event);
     }
     this.ws.onclose = (event) => {
-      console.log('ws关闭连接', event);
     }
   }
 

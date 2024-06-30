@@ -2,7 +2,7 @@ import { paths } from "@/types/api";
 import { supportUploadWithFile } from "@/utils/platform";
 
 export class AppServerApi {
-  self: AppServerApi;
+  self!: AppServerApi;
 
   constructor() { }
 
@@ -14,7 +14,6 @@ export class AppServerApi {
     input: string | File,
     onProgress?: (uploaded: number, total: number) => void,
   ): Promise<paths['/users/avatar/upload']['post']['responses']['201']['content']['application/json']> {
-    console.log('uploadAvatar:', input);
     if (supportUploadWithFile()) {
       return this.__uploadWithFile('users/avatar/upload', 'file', 'file.jpg', input as File, 'jpg', [], {}, onProgress);
     } else {
@@ -31,7 +30,6 @@ export class AppServerApi {
   async register(
     body: paths['/auth/register']['post']['requestBody']['content']['application/json'],
   ): Promise<paths['/auth/register']['post']['responses']['201']['content']['application/json']> {
-    console.log('register:', JSON.stringify(body));
     return this.__post('auth/register', body);
   }
 

@@ -45,7 +45,6 @@ export default function Register() {
     }
     setIsLoading(true);
     const res = await appServerApi.uploadAvatar(file);
-    console.log('res: ', res);
     if (!isCreated(res.statusCode)) {
       message.error('头像上传失败: ' + res.message);
       setIsLoading(false);

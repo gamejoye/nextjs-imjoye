@@ -95,8 +95,6 @@ export class WebAppServerApiImpl extends AppServerApi {
     const token = await this.getBearerToken();
     if (path[0] == '/') path = path.substring(1);
     path = this.apiBaseUrl + path;
-    console.log('path:', path);
-    console.log('token:', token);
     const res = await fetch(path, {
       method: 'GET',
       next: { revalidate: 60 },

@@ -5,7 +5,7 @@ import { IBaseIMJCManager } from './interface/BaseIMJCManager.interface';
   * IMJoye Chat聊天模块
  */
 export class IMJCManager implements IBaseIMJCManager {
-  self: IBaseIMJCManager;
+  self!: IBaseIMJCManager;
 
   init(self: IBaseIMJCManager) {
     this.self = self;

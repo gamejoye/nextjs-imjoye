@@ -2,7 +2,7 @@ import { IEventEmitter } from './interface/EventEmitter.interface';
 import { EventType } from './constant/EventType';
 
 export class EventEmitter {
-  self: IEventEmitter;
+  self!: IEventEmitter;
 
   init(self: IEventEmitter) {
     this.self = self;

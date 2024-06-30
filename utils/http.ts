@@ -14,7 +14,6 @@ export async function fetchWithRetry<T>(
     throw new Error('网络开了一点小差～');
   } catch (error) {
     if (retries > 0) {
-      console.log(`尝试重新请求 ${retries}`);
       await new Promise(resolve => setTimeout(resolve, delay));
       return fetchWithRetry(callback, isSuccess, retries - 1, delay);
     }

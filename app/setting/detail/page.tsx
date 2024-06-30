@@ -15,11 +15,11 @@ export default function Detail() {
   const { user } = useUser();
   const [imageUrl, setImageUrl] = useState<string | undefined>(user?.avatarUrl);
 
-  const handleFinish = (values) => {
+  const handleFinish = () => {
     
   };
 
-  const handleImageUpload = ({ file }) => {
+  const handleImageUpload = () => {
   };
   return (
     <Content style={{
