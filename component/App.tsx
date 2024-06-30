@@ -8,10 +8,12 @@ import imjcManager from "@/imjc/imjc";
 import { initClient } from "@/utils/client";
 import AuthLayout from "@/component/AuthLayout";
 import MainLayout from "@/component/MainLayout";
-import ThemeProvider, { useTheme } from "@/component/ThemeProvider";
-import { UserProvider, useUser } from "@/component/UserProvider";
+import ThemeProvider from "@/component/ThemeProvider";
+import { UserProvider } from "@/component/UserProvider";
+import { useUser } from '@/hooks/global';
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import locale from 'antd/locale/zh_CN';
+import { useTheme } from "@/hooks/global";
 
 export function App({
   children,

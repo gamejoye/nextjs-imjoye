@@ -2,7 +2,7 @@
 
 import { Message } from "@/types/global"
 import { Avatar, Empty, List, Skeleton, Typography } from "antd";
-import { useUser } from "./UserProvider";
+import { useUser } from '@/hooks/global';
 import useToken from "antd/es/theme/useToken";
 
 const { Text } = Typography;

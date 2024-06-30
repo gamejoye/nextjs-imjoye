@@ -1,6 +1,6 @@
 import { ChatroomSummary } from '@/types/global';
-import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react';
-import { useUser } from './UserProvider';
+import { PropsWithChildren, createContext, useEffect, useState } from 'react';
+import { useUser } from '@/hooks/global';
 import { useClient } from '@/hooks/global';
 import imjcManager from '@/imjc/imjc';
 import { message } from 'antd';

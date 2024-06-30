@@ -6,7 +6,7 @@ import { LogoutOutlined, MessageOutlined, SettingOutlined, UserOutlined } from '
 import { ReactNode } from 'react';
 import { UserInfoUtil } from '@/utils/userInfo';
 import { usePathname, useRouter } from 'next/navigation';
-import { useUser } from './UserProvider';
+import { useUser } from '@/hooks/global';
 
 const { Sider } = Layout;
 

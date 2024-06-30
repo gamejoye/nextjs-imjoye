@@ -15,7 +15,7 @@ interface UserContextType {
 const defaultUserDispatch = (user: User | null) => {};
 const defaultStatusDispatch = (status: Status) => {};
 
-const UserContext = createContext<UserContextType>({
+export const UserContext = createContext<UserContextType>({
   user: null,
   setUser: defaultUserDispatch,
   status: 'idle',
@@ -34,8 +34,4 @@ export function UserProvider({
       {children}
     </UserContext.Provider>
   );
-}
-
-export function useUser() {
-  return useContext(UserContext);
 }

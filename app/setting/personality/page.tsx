@@ -1,6 +1,6 @@
 'use client';
 
-import { useTheme } from "@/component/ThemeProvider";
+import { useTheme } from "@/hooks/global";
 import { initClient } from "@/utils/client";
 import { Divider, Flex, Switch, Typography } from "antd";
 import { Content } from "antd/es/layout/layout";

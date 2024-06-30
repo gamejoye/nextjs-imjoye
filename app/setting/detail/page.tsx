@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from "@/component/UserProvider";
+import { useUser } from '@/hooks/global';
 import imjcManager from "@/imjc/imjc";
 import { initClient } from "@/utils/client";
 import { UserOutlined } from "@ant-design/icons";

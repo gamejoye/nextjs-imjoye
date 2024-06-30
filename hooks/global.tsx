@@ -1,5 +1,6 @@
 import { ChatroomSummariesContext } from "@/component/ChatroomSummariesProvider";
-import { useUser } from "@/component/UserProvider";
+import { ThemeContext } from "@/component/ThemeProvider";
+import { UserContext } from "@/component/UserProvider";
 import imjcManager from "@/imjc/imjc";
 import { ChatroomSummary, Message, User } from "@/types/global";
 import { initClient } from "@/utils/client";
@@ -10,6 +11,15 @@ import { useContext, useEffect, useState } from "react";
 type Status = 'idle' | 'loading' | 'success' | 'fail';
 
 const checkLoading = (status: Status) => ['idle', 'loading'].some(s => s === status);
+
+
+export const useTheme = () => {
+  return useContext(ThemeContext);
+};
+
+export function useUser() {
+  return useContext(UserContext);
+}
 
 export function useClient() {
   useEffect(() => {

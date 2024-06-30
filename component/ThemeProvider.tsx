@@ -6,14 +6,10 @@ interface ThemeContext {
   setTheme: (theme: Theme) => void;
 }
 const defaultDispatch = (theme: Theme) => { };
-const ThemeContext = createContext<ThemeContext>({
+export const ThemeContext = createContext<ThemeContext>({
   theme: 'light',
   setTheme: defaultDispatch,
 });
-
-export const useTheme = () => {
-  return useContext(ThemeContext);
-};
 
 /// ------------------------------------------------------------
 

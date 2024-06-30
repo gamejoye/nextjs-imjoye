@@ -9,7 +9,7 @@ import { UserInfoUtil } from '@/utils/userInfo';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import imjcManager from '@/imjc/imjc';
-import { useUser } from '@/component/UserProvider';
+import { useUser } from '@/hooks/global';
 import useToken from 'antd/es/theme/useToken';
 const { Content } = Layout;
 const { Text } = Typography;

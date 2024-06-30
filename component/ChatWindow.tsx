@@ -11,7 +11,7 @@ import { ChatroomSummary } from "@/types/global";
 import { MessageOutlined, UploadOutlined, UserOutlined } from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
 import { KeyboardEvent, useEffect, useRef, useState } from "react";
-import { useUser } from "./UserProvider";
+import { useUser } from '@/hooks/global';
 import { getCurrentDatetime } from "@/utils/datetime";
 
 type Prop = {
