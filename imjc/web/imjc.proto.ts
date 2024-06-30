@@ -10,11 +10,13 @@ import { fetchWithRetry } from '@/utils/http';
 import { getCurrentDatetime } from '@/utils/datetime';
 import { isCreated, isOk } from '@/api/web/issuccess';
 import { Chatroom, ChatroomSummary, FriendInfo, Message, User } from '@/types/global';
+import { WebSocketEventType } from '../constant/WebSocketEventType';
 
 export default class WebIMJCManagerImpl implements IBaseIMJCManager {
   connectionStatus: ConnectionStatus = ConnectionStatus.Idle;
   serverApi: AppServerApi;
   eventEmitter: EventEmitter;
+  ws: WebSocket;
 
   constructor(
     serverApi: AppServerApi,
@@ -282,10 +284,38 @@ export default class WebIMJCManagerImpl implements IBaseIMJCManager {
   }
 
   async connect(userId: number, token: string) {
-    
+    let url = process.env.NEXT_PUBLIC_WS_BASE_URL as string;
+    if (url[url.length - 1] == '/') url = url.substring(0, url.length - 1);
+    if (this.ws) {
+      this.ws.close();
+    }
+
+    this.ws = new WebSocket(url + '?authorization=' + token);
+    this.ws.onmessage = (event) => {
+      const wsMsg: WebSocketMessage<unknown> = JSON.parse(event.data);
+      switch (wsMsg.event) {
+        case WebSocketEventType.NEW_MESSAGE: {
+          const msg = wsMsg.payload as Message;
+          this.eventEmitter.emit(EventType.NEW_MESSAGE, msg);
+        }
+      }
+    }
+    this.ws.onopen = (event) => {
+      this.ws.send('Authorization: Bearer ' + token);
+      // socket.send('Authorization: Bearer ' + YOUR_TOKEN);
+      console.log('ws连接成功', event);
+    }
+    this.ws.onerror = (event) => {
+      console.log('ws连接失败', event);
+    }
+    this.ws.onclose = (event) => {
+      console.log('ws关闭连接', event);
+    }
   }
 
   async disconnect(userId: number, token: string) {
-    
+    if (this.ws) {
+      this.ws.close();
+    }
   }
 }
