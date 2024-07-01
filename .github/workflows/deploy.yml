@@ -34,7 +34,5 @@ jobs:
             ls -al
           SCRIPT_AFTER: |
             cd /usr/local/chat/web
-            whoami
-            ls -al
             pm2 delete nextjs-imjoye
             pm2 start cnpm --name "nextjs-imjoye" -- start
