@@ -1,4 +1,4 @@
-export type FriendshipType = 'PENDING' | 'ACCEPT' | 'REJECT';
+export type FriendRequestType = 'PENDING' | 'ACCEPT' | 'REJECT';
 
 export class UserInfo {
   'authenticatedToken': string;
@@ -54,20 +54,14 @@ export class ChatroomSummary {
 
 export class FriendInfo {
   user: User;
-  status: FriendshipType;
   createTime: string;
-  updateTime?: string;
 
   constructor(
     user: User = new User(),
-    status: FriendshipType = 'PENDING',
     createTime: string = '',
-    updateTime?: string,
   ) {
     this.user = user;
-    this.status = status;
-    this.createTime = createTime;
-    this.updateTime = updateTime;
+    this.createTime = createTime
   }
 }
 
@@ -118,5 +112,29 @@ export class User {
     this.avatarUrl = avatarUrl;
     this.description = description;
     this.createTime = createTime;
+  }
+}
+
+export class FriendRequest {
+  id: number;
+  status: FriendRequestType;
+  from: User;
+  to: User;
+  createTime: string;
+  updateTime: string;
+  constructor(
+    id: number = -1,
+    status: FriendRequestType = 'PENDING',
+    from: User = new User(),
+    to: User = new User(),
+    createTime: string = '',
+    updateTime: string = '',
+  ) {
+    this.id = id;
+    this.status = status;
+    this.from = from;
+    this.to = to;
+    this.createTime = createTime;
+    this.updateTime = updateTime;
   }
 }
