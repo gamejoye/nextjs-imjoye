@@ -73,6 +73,13 @@ export class AppServerApi {
     return this.__post('messages', body);
   }
 
+  async requestFriendRequests(
+    path: paths['/users/{id}/friends/requests']['get']['parameters']['path'],
+  ): Promise<paths['/users/{id}/friends/requests']['get']['responses']['200']['content']['application/json']> {
+    const { id } = path;
+    return this.__get(`users/${id}/friends/requests`);
+  }
+
   async requestUser(
     path: paths['/users/{id}']['get']['parameters']['path'],
   ): Promise<paths['/users/{id}']['get']['responses']['200']['content']['application/json']> {
