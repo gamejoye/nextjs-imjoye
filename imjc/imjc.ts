@@ -194,6 +194,34 @@ export class IMJCManager implements IBaseIMJCManager {
   }
 
   /**
+   * 从本地获取好友请求
+   * 
+   * @param userId
+   * @param failCB
+   * @returns
+   */
+  getFriendRequests(
+    userId: number,
+    failCB: (err: Error) => void,
+  ) {
+    return this.self.getFriendRequests(userId, failCB);
+  }
+
+  /**
+   * 从远程获取好友请求
+   * 
+   * @param userId
+   * @param failCB
+   * @returns
+   */
+  getFriendRequestsFromRemote(
+    userId: number,
+    failCB: (err: Error) => void,
+  ) {
+    return this.self.getFriendRequestsFromRemote(userId, failCB);
+  }
+
+  /**
    * 从远程获取用户信息
    *
    * @param userId

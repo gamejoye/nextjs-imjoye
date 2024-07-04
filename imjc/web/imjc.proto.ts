@@ -9,7 +9,7 @@ import { AppServerApi } from '../../api/appServerApi';
 import { fetchWithRetry } from '@/utils/http';
 import { getCurrentDatetime } from '@/utils/datetime';
 import { isCreated, isOk } from '@/api/web/issuccess';
-import { Chatroom, ChatroomSummary, FriendInfo, Message, User } from '@/types/global';
+import { Chatroom, ChatroomSummary, FriendInfo, FriendRequest, Message, User } from '@/types/global';
 import { WebSocketEventType } from '../constant/WebSocketEventType';
 
 export default class WebIMJCManagerImpl implements IBaseIMJCManager {
@@ -24,6 +24,27 @@ export default class WebIMJCManagerImpl implements IBaseIMJCManager {
   ) {
     this.serverApi = serverApi;
     this.eventEmitter = eventEmitter;
+  }
+
+  getFriendRequests(userId: number, failCB: (err: Error) => void): Promise<FriendRequest[]> {
+    return Promise.resolve([]);
+  }
+
+  async getFriendRequestsFromRemote(userId: number, failCB: (err: Error) => void): Promise<FriendRequest[]> {
+    try {
+      const res = await fetchWithRetry(
+        () => (
+          this.serverApi.requestFriendRequests(
+            { id: userId, },
+          )
+        ),
+        ({ statusCode }) => isOk(statusCode),
+      )
+      return res.data;
+    } catch(err: any) {
+      failCB(err);
+      return [];
+    }
   }
 
   async quitChatroom(
