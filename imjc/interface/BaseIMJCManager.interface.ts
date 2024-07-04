@@ -1,4 +1,4 @@
-import { FriendInfo, User, Chatroom, ChatroomSummary, Message } from '@/types/global';
+import { FriendInfo, User, Chatroom, ChatroomSummary, Message, FriendRequest } from '@/types/global';
 
 export interface IBaseIMJCManager {
   /**
@@ -158,6 +158,30 @@ export interface IBaseIMJCManager {
     userId: number,
     failCB: (err: Error) => void,
   ): Promise<User>;
+
+  /**
+   * 从本地获取好友请求
+   * 
+   * @param userId
+   * @param failCB
+   * @returns
+   */
+  getFriendRequests(
+    userId: number,
+    failCB: (err: Error) => void,
+  ): Promise<Array<FriendRequest>>;
+
+  /**
+   * 从远程获取好友请求
+   * 
+   * @param userId
+   * @param failCB
+   * @returns
+   */
+  getFriendRequestsFromRemote(
+    userId: number,
+    failCB: (err: Error) => void,
+  ): Promise<Array<FriendRequest>>;
 
   /**
    * 从远程获取用户信息
