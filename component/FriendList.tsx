@@ -1,7 +1,7 @@
 'use client';
 
 import { User } from "@/types/global"
-import { Avatar, Badge, Card, Empty, List, Typography } from "antd"
+import { Avatar, Card, Empty, List, Typography } from "antd"
 
 type Props = {
   friends: User[],
@@ -13,9 +13,6 @@ export function FriendList({
   return (
     <div style={{ overflowY: 'auto', height: '100vh' }}>
       <List
-        style={{
-          padding: 8,
-        }}
         grid={{ gutter: 16, column: 3 }}
         itemLayout="horizontal"
         dataSource={friends}
