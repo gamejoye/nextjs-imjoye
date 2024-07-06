@@ -80,11 +80,39 @@ export class AppServerApi {
     return this.__get(`users/${id}/friends/requests`);
   }
 
+  async acceptFriendRequest(
+    path: paths['/users/{id}/friends/requests/{requestId}/accept']['put']['parameters']['path'],
+  ): Promise<paths['/users/{id}/friends/requests/{requestId}/accept']['put']['responses']['200']['content']['application/json']> {
+    const { id, requestId } = path;
+    return this.__put(`users/${id}/friends/requests/${requestId}/accept`);
+  }
+
+  async rejectFriendRequest(
+    path: paths['/users/{id}/friends/requests/{requestId}/reject']['put']['parameters']['path'],
+  ): Promise<paths['/users/{id}/friends/requests/{requestId}/reject']['put']['responses']['200']['content']['application/json']> {
+    const { id, requestId } = path;
+    return this.__put(`users/${id}/friends/requests/${requestId}/reject`);
+  }
+
+  async sendFriendRequest(
+    body: paths['/users/{id}/friends/requests']['post']['requestBody']['content']['application/json'],
+  ): Promise<paths['/users/{id}/friends/requests']['post']['responses']['201']['content']['application/json']> {
+    const { from } = body;
+    return this.__post(`users/${from}/friends/requests`, body);
+  }
+
   async requestUser(
     path: paths['/users/{id}']['get']['parameters']['path'],
   ): Promise<paths['/users/{id}']['get']['responses']['200']['content']['application/json']> {
     const { id } = path;
     return this.__get(`users/${id}`);
+  }
+
+  async requestUserByEmail(
+    query: paths['/users']['get']['parameters']['query'],
+  ): Promise<paths['/users']['get']['responses']['200']['content']['application/json']> {
+    const { email } = query;
+    return this.__get(`users?email=${email}`);
   }
 
   async requestFriends(
