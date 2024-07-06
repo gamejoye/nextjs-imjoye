@@ -52,11 +52,9 @@ export class WebAppServerApiImpl extends AppServerApi {
     }
 
     const token = await this.getBearerToken();
-    if (path[0] == '/') path = path.substring(1);
-    path = this.apiBaseUrl + path;
+    path = this.concatPath(path);
     const res = await fetch(path, {
       method: 'POST',
-      next: { revalidate: 60 },
       headers: {
         "Authorization": token,
       },
@@ -66,18 +64,15 @@ export class WebAppServerApiImpl extends AppServerApi {
     return res.json();
   }
 
-
   async __post<T>(
     path: string,
     data = {},
     options = {},
   ): Promise<T> {
     const token = await this.getBearerToken();
-    if (path[0] == '/') path = path.substring(1);
-    path = this.apiBaseUrl + path;
+    path = this.concatPath(path);
     const res = await fetch(path, {
       method: 'POST',
-      next: { revalidate: 60 },
       headers: {
         "Content-Type": "application/json",
         "Authorization": token,
@@ -93,11 +88,10 @@ export class WebAppServerApiImpl extends AppServerApi {
     options = {},
   ): Promise<T> {
     const token = await this.getBearerToken();
-    if (path[0] == '/') path = path.substring(1);
-    path = this.apiBaseUrl + path;
+    path = this.concatPath(path);
     const res = await fetch(path, {
       method: 'GET',
-      next: { revalidate: 60 },
+      cache: 'no-store',
       headers: {
         "Content-Type": "application/json",
         "Authorization": token,
@@ -113,11 +107,9 @@ export class WebAppServerApiImpl extends AppServerApi {
     options = {},
   ): Promise<T> {
     const token = await this.getBearerToken();
-    if (path[0] == '/') path = path.substring(1);
-    path = this.apiBaseUrl + path;
+    path = this.concatPath(path);
     const res = await fetch(path, {
       method: 'PUT',
-      next: { revalidate: 60 },
       headers: {
         "Content-Type": "application/json",
         "Authorization": token,
@@ -135,5 +127,11 @@ export class WebAppServerApiImpl extends AppServerApi {
       token = userInfo.authenticatedToken;
     }
     return 'Bearer ' + token;
+  }
+
+  private concatPath(path: string) {
+    if (path[0] == '/') path = path.substring(1);
+    path = this.apiBaseUrl + path;
+    return path;
   }
 }
