@@ -160,6 +160,18 @@ export interface IBaseIMJCManager {
   ): Promise<User>;
 
   /**
+   * 从远程根据email获取用户信息
+   * 
+   * @param email
+   * @param failCB
+   * @returns
+   */
+  getUserByEmailFromRemote(
+    email: string,
+    failCB: (err: Error) => void,
+  ): Promise<User>;
+
+  /**
    * 从本地获取好友请求
    * 
    * @param userId
@@ -170,6 +182,46 @@ export interface IBaseIMJCManager {
     userId: number,
     failCB: (err: Error) => void,
   ): Promise<Array<FriendRequest>>;
+
+  /**
+   * 发送好友请求
+   * 
+   * @param from
+   * @param to
+   */
+  sendFriendRequst(
+    from: number,
+    to: number,
+    failCB: (err: Error) => void,
+  ): Promise<FriendRequest>;
+
+  /**
+   * 同意好友请求
+   * 
+   * @param userId
+   * @param requestId
+   * @param failCB
+   * @returns
+   */
+  acceptFriendRequest(
+    userId: number,
+    requestId: number,
+    failCB: (err: Error) => void,
+  ): Promise<FriendRequest>;
+
+  /**
+   * 拒绝好友请求
+   * 
+   * @param userId
+   * @param requestId
+   * @param failCB
+   * @returns
+   */
+  rejectFriendRequest(
+    userId: number,
+    requestId: number,
+    failCB: (err: Error) => void,
+  ): Promise<FriendRequest>;
 
   /**
    * 从远程获取好友请求
