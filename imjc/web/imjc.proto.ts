@@ -26,6 +26,79 @@ export default class WebIMJCManagerImpl implements IBaseIMJCManager {
     this.eventEmitter = eventEmitter;
   }
 
+  async sendFriendRequst(
+    from: number,
+    to: number,
+    failCB: (err: Error) => void,
+  ): Promise<FriendRequest> {
+    try {
+      const res = await fetchWithRetry(
+        () => (
+          this.serverApi.sendFriendRequest(
+            { from, to, },
+          )
+        ),
+        ({ statusCode }) => isCreated(statusCode),
+        0,
+      )
+      return res.data;
+    } catch (err: any) {
+      failCB(err);
+      return new FriendRequest();
+    }
+  }
+
+  async getUserByEmailFromRemote(email: string, failCB: (err: Error) => void): Promise<User> {
+    try {
+      const res = await fetchWithRetry(
+        () => (
+          this.serverApi.requestUserByEmail(
+            { email },
+          )
+        ),
+        ({ statusCode }) => isOk(statusCode),
+        0,
+      )
+      return res.data;
+    } catch (err: any) {
+      failCB(err);
+      return new User();
+    }
+  }
+  async acceptFriendRequest(userId: number, requestId: number, failCB: (err: Error) => void): Promise<FriendRequest> {
+    try {
+      const res = await fetchWithRetry(
+        () => (
+          this.serverApi.acceptFriendRequest(
+            { id: userId, requestId },
+          )
+        ),
+        ({ statusCode }) => isOk(statusCode),
+      )
+      return res.data;
+    } catch (err: any) {
+      failCB(err);
+      return new FriendRequest();
+    }
+  }
+
+  async rejectFriendRequest(userId: number, requestId: number, failCB: (err: Error) => void): Promise<FriendRequest> {
+    try {
+      const res = await fetchWithRetry(
+        () => (
+          this.serverApi.rejectFriendRequest(
+            { id: userId, requestId },
+          )
+        ),
+        ({ statusCode }) => isOk(statusCode),
+      )
+      return res.data;
+    } catch (err: any) {
+      failCB(err);
+      return new FriendRequest();
+    }
+  }
+
   getFriendRequests(userId: number, failCB: (err: Error) => void): Promise<FriendRequest[]> {
     return Promise.resolve([]);
   }
@@ -41,7 +114,7 @@ export default class WebIMJCManagerImpl implements IBaseIMJCManager {
         ({ statusCode }) => isOk(statusCode),
       )
       return res.data;
-    } catch(err: any) {
+    } catch (err: any) {
       failCB(err);
       return [];
     }
