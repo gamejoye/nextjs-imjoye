@@ -1,4 +1,4 @@
-import { Message } from '@/types/global';
+import { FriendRequest, Message } from '@/types/global';
 import { IBaseIMJCManager } from './interface/BaseIMJCManager.interface';
 
 /*
@@ -194,6 +194,20 @@ export class IMJCManager implements IBaseIMJCManager {
   }
 
   /**
+   * 从远程根据email获取用户信息
+   * 
+   * @param email
+   * @param failCB
+   * @returns
+   */
+  getUserByEmailFromRemote(
+    email: string,
+    failCB: (err: Error) => void,
+  ) {
+    return this.self.getUserByEmailFromRemote(email, failCB);
+  }
+
+  /**
    * 从本地获取好友请求
    * 
    * @param userId
@@ -205,6 +219,52 @@ export class IMJCManager implements IBaseIMJCManager {
     failCB: (err: Error) => void,
   ) {
     return this.self.getFriendRequests(userId, failCB);
+  }
+
+  /**
+   * 发送好友请求
+   * 
+   * @param from
+   * @param to
+   */
+  sendFriendRequst(
+    from: number,
+    to: number,
+    failCB: (err: Error) => void,
+  ): Promise<FriendRequest> {
+    return this.self.sendFriendRequst(from, to, failCB);
+  }
+
+  /**
+   * 同意好友请求
+   * 
+   * @param userId
+   * @param requestId
+   * @param failCB
+   * @returns
+   */
+  acceptFriendRequest(
+    userId: number,
+    requestId: number,
+    failCB: (err: Error) => void,
+  ): Promise<FriendRequest> {
+    return this.self.acceptFriendRequest(userId, requestId, failCB);
+  }
+
+  /**
+   * 拒绝好友请求
+   * 
+   * @param userId
+   * @param requestId
+   * @param failCB
+   * @returns
+   */
+  rejectFriendRequest(
+    userId: number,
+    requestId: number,
+    failCB: (err: Error) => void,
+  ): Promise<FriendRequest> {
+    return this.self.rejectFriendRequest(userId, requestId, failCB);
   }
 
   /**
