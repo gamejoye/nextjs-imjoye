@@ -1,6 +1,6 @@
 'use client';
 
-import { GroupOutlined, UserOutlined } from "@ant-design/icons";
+import { GroupOutlined, UserOutlined, UsergroupAddOutlined } from "@ant-design/icons";
 import { MenuProps } from "antd";
 import SubMenuLayout from "@/component/SubMenuLayout";
 
@@ -21,6 +21,7 @@ function getItem(
 }
 
 const items: MenuItem[] = [
+  getItem('好友请求', '/contact/friendrequest', <UsergroupAddOutlined />),
   getItem('好友', '/contact/friend', <UserOutlined />),
   getItem('群聊', '/contact/group', <GroupOutlined />),
 ];
