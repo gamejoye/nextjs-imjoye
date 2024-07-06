@@ -9,6 +9,10 @@ export interface paths {
     /** 根据userId获取用户 */
     get: operations["UsersController_getUserById"];
   };
+  "/users": {
+    /** 根据email获取用户 */
+    get: operations["UsersController_getUserByEmail"];
+  };
   "/users/{id}/friends": {
     /** 根据userId获取好友列表 */
     get: operations["UsersController_getFriendsById"];
@@ -333,8 +337,34 @@ export interface operations {
           };
         };
       };
-      /** @description 未认证用户 */
-      401: {
+      /** @description 未找到用户 */
+      404: {
+        content: never;
+      };
+    };
+  };
+  /** 根据email获取用户 */
+  UsersController_getUserByEmail: {
+    parameters: {
+      query: {
+        /**
+         * @description 待查询的用户邮箱
+         * @example gamejoye@gmail.com
+         */
+        email: string;
+      };
+    };
+    responses: {
+      /** @description 成功根据email获取用户 */
+      200: {
+        content: {
+          "application/json": components["schemas"]["ApiBaseResult"] & {
+            data: components["schemas"]["UserVo"];
+          };
+        };
+      };
+      /** @description 不存在的邮箱 */
+      404: {
         content: never;
       };
     };
