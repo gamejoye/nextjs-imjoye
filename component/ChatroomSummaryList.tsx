@@ -1,18 +1,43 @@
 'use client';
 
-import { useChatroomSummaries } from "@/hooks/global";
-import { ChatroomSummary } from "@/types/global"
-import { Avatar, Badge, Empty, List, Skeleton, Typography } from "antd"
+import { useChatroomSummaries, useUser } from "@/hooks/global";
+import { EventType } from "@/imjc/constant/EventType";
+import eventEmitter from "@/imjc/emitter";
+import imjcManager from "@/imjc/imjc";
+import { Chatroom, ChatroomSummary } from "@/types/global"
+import { Avatar, Badge, Empty, List, Skeleton, Typography, message } from "antd"
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export function ChatroomSummaryList() {
   const router = useRouter();
   const pathname = usePathname();
+  const { user } = useUser();
   const selectId = parseInt(pathname.substring(pathname.lastIndexOf('/') + 1));
   const {
     summaries,
+    setSummaries,
     isQueryLoading,
   } = useChatroomSummaries();
+
+  useEffect(() => {
+    const newChatroomHandle = async (chatroom: Chatroom) => {
+      if (!user) return;
+      const newSummary = await imjcManager
+        .getChatroomSummaryFromRemote(
+          user.id,
+          chatroom.id,
+          (err) => { },
+        );
+      const newSummaries = summaries.filter((summary) => summary.chatroom.id !== newSummary.chatroom.id);
+      newSummaries.unshift(newSummary);
+      setSummaries(newSummaries);
+    };
+    eventEmitter.on(EventType.NEW_CHATROOM, newChatroomHandle);
+    return () => {
+      eventEmitter.off(EventType.NEW_CHATROOM, newChatroomHandle);
+    };
+  }, [summaries, setSummaries, user]);
 
   const handleOnClick = (summary: ChatroomSummary) => {
     router.push(`/message/${summary.chatroom.id}`);
