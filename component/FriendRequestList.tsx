@@ -1,12 +1,15 @@
 'use client';
 
 import { useUser } from "@/hooks/global";
+import { EventType } from "@/imjc/constant/EventType";
+import { WebSocketEventType } from "@/imjc/constant/WebSocketEventType";
+import eventEmitter from "@/imjc/emitter";
 import imjcManager from "@/imjc/imjc";
 import { FriendRequest } from "@/types/global";
 import { showRelativeTime } from "@/utils/datetime";
 import { Avatar, Button, Card, Empty, List, Skeleton, Space, Typography, message } from "antd"
 import useToken from "antd/es/theme/useToken";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 const { Text } = Typography;
 
 type Props = {
@@ -27,6 +30,20 @@ export function FriendRequestList({
   const { colorSuccess, colorError } = useToken()[1];
   const isLoading = status === 'loading' || status === 'idle';
   const [fqs, setFqs] = useState(friendRequests);
+
+  useEffect(() => {
+    const newFriendRequestHandle = (newFq: FriendRequest) => {
+      const newFqs = fqs.filter((fq) => fq.id !== newFq.id);
+      newFqs.push(newFq);
+      newFqs.sort(fqSorter);
+      setFqs(newFqs);
+    };
+    eventEmitter.on(EventType.NEW_FRIEND_REQUEST, newFriendRequestHandle);
+    return () => {
+      eventEmitter.off(EventType.NEW_FRIEND_REQUEST, newFriendRequestHandle);
+    }
+  }, [fqs]);
+
   const handleOnAccept = async (request: FriendRequest) => {
     if (!user) return;
     let success = true;
