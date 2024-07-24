@@ -49,7 +49,8 @@ export function ChatWindow({
     return () => {
       eventEmitter.off(EventType.NEW_MESSAGE, newMessageHandle);
     };
-  }, [messages]);
+  }, [messages, setNewMessage]);
+
   useEffect(() => {
     // 离开聊天室更新 访问时间
     return () => {
