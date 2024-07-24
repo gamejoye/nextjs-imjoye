@@ -391,6 +391,22 @@ export default class WebIMJCManagerImpl implements IBaseIMJCManager {
         case WebSocketEventType.NEW_MESSAGE: {
           const msg = wsMsg.payload as Message;
           this.eventEmitter.emit(EventType.NEW_MESSAGE, msg);
+          break;
+        }
+        case WebSocketEventType.NEW_FRIEND_REQUEST: {
+          const fq = wsMsg.payload as FriendRequest;
+          this.eventEmitter.emit(EventType.NEW_FRIEND_REQUEST, fq);
+          break;
+        }
+        case WebSocketEventType.NEW_FRIEND: {
+          const friend = wsMsg.payload as User;
+          this.eventEmitter.emit(EventType.NEW_FRIEND, friend);
+          break;
+        }
+        case WebSocketEventType.NEW_CHATROOM: {
+          const chatroom = wsMsg.payload as Chatroom;
+          this.eventEmitter.emit(EventType.NEW_CHATROOM, chatroom);
+          break;
         }
       }
     }
