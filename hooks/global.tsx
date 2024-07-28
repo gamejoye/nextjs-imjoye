@@ -12,6 +12,13 @@ type Status = 'idle' | 'loading' | 'success' | 'fail';
 
 const checkLoading = (status: Status) => ['idle', 'loading'].some(s => s === status);
 
+const messageSorter = (m1: Message, m2: Message) => {
+  const t1 = new Date(m1.createTime).getTime();
+  const t2 = new Date(m2.createTime).getTime();
+  if (t1 === t2) return m1.id - m2.id;
+  return t1 - t2;
+}
+
 export function useClient() {
   useEffect(() => {
     initClient();
@@ -42,8 +49,7 @@ export function useMessages(summary: ChatroomSummary) {
   const [messages, setMessages] = useState<Message[]>([]);
 
   const setNewMessage = (message: Message) => {
-    const msgSorter = (m1: Message, m2: Message) => new Date(m1.createTime).getTime() - new Date(m2.createTime).getTime();
-    const newMessages = [...messages, message].sort(msgSorter);
+    const newMessages = [...messages, message].sort(messageSorter);
     setMessages(newMessages);
   }
 
