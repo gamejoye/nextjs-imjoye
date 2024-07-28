@@ -32,6 +32,7 @@ export function ChatWindow({
   const {
     summaries,
     setSummaries,
+    setCurrentChatroom,
     isQueryLoading: isSummariesQueryLoading,
   } = useChatroomSummaries();
   const { user } = useUser();
@@ -42,6 +43,7 @@ export function ChatWindow({
   useEffect(() => {
     // messages 依赖项防止过期闭包
     const newMessageHandle = (message: Message) => {
+      if (message.chatroom.id !== summary.chatroom.id) return;
       setNewMessage(message);
     };
     // 处理新消息
@@ -49,7 +51,14 @@ export function ChatWindow({
     return () => {
       eventEmitter.off(EventType.NEW_MESSAGE, newMessageHandle);
     };
-  }, [messages, setNewMessage]);
+  }, [messages, setNewMessage, summary]);
+
+  useEffect(() => {
+    setCurrentChatroom(summary.chatroom);
+    return () => {
+      setCurrentChatroom(null);
+    }
+  }, [summary, setCurrentChatroom]);
 
   useEffect(() => {
     // 离开聊天室更新 访问时间
@@ -64,7 +73,7 @@ export function ChatWindow({
         );
       }
     }
-  }, []);
+  }, [summary.chatroom.id, user]);
   useEffect(() => {
     // summaries loading 逻辑
     if (!isSummariesQueryLoading) {

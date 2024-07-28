@@ -4,7 +4,7 @@ import { useChatroomSummaries, useUser } from "@/hooks/global";
 import { EventType } from "@/imjc/constant/EventType";
 import eventEmitter from "@/imjc/emitter";
 import imjcManager from "@/imjc/imjc";
-import { Chatroom, ChatroomSummary } from "@/types/global"
+import { Chatroom, ChatroomSummary, Message } from "@/types/global"
 import { Avatar, Badge, Empty, List, Skeleton, Typography, message } from "antd"
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -17,6 +17,7 @@ export function ChatroomSummaryList() {
   const {
     summaries,
     setSummaries,
+    currentChatroom,
     isQueryLoading,
   } = useChatroomSummaries();
 
@@ -38,6 +39,26 @@ export function ChatroomSummaryList() {
       eventEmitter.off(EventType.NEW_CHATROOM, newChatroomHandle);
     };
   }, [summaries, setSummaries, user]);
+
+  useEffect(() => {
+    const newMessageHandle = (message: Message) => {
+      const newSummaries = summaries.map((oldSummary) => {
+        if (oldSummary.chatroom.id !== message.chatroom.id) return oldSummary;
+        let unreadMessageCount = oldSummary.unreadMessageCount;
+        if (currentChatroom?.id !== message.chatroom.id)  unreadMessageCount++;
+        return {
+          ...oldSummary,
+          unreadMessageCount,
+          latestMessage: message,
+        };
+      });
+      setSummaries(newSummaries);
+    };
+    eventEmitter.on(EventType.NEW_MESSAGE, newMessageHandle);
+    return () => {
+      eventEmitter.off(EventType.NEW_MESSAGE, newMessageHandle);
+    };
+  }, [summaries, setSummaries]);
 
   const handleOnClick = (summary: ChatroomSummary) => {
     router.push(`/message/${summary.chatroom.id}`);
