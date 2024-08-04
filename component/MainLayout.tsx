@@ -1,12 +1,15 @@
 'use client';
 
-import { Avatar, Button, Layout, Menu, MenuProps } from 'antd';
+import { Avatar, Button, Col, Layout, Menu, MenuProps, Row, Tag } from 'antd';
 import useToken from 'antd/es/theme/useToken';
 import { LogoutOutlined, MessageOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { UserInfoUtil } from '@/utils/userInfo';
 import { usePathname, useRouter } from 'next/navigation';
 import { useUser } from '@/hooks/global';
+import eventEmitter from '@/imjc/emitter';
+import { EventType } from '@/imjc/constant/EventType';
+import ConnectionStatus from '@/imjc/constant/ConnectionStatus';
 
 const { Sider } = Layout;
 
@@ -63,9 +66,34 @@ export default function MainLayout({
     setStatus('idle');
   }
   const { colorBorderSecondary } = useToken()[1];
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>(ConnectionStatus.Idle);
+
+  useEffect(() => {
+    const handleConnectStatusChanged = (status: ConnectionStatus) => {
+      setConnectionStatus(status);
+    };
+    eventEmitter.on(EventType.CONNECTION_STATUS_CHANGED, handleConnectStatusChanged);
+    return () => {
+      eventEmitter.off(EventType.CONNECTION_STATUS_CHANGED, handleConnectStatusChanged);
+    }
+  }, [user, connectionStatus, setConnectionStatus]);
+
   const handleOnSelect = ({ key }: { key: string }) => {
     router.push(key);
   }
+
+  const getConnectionStatusTagColor = () => {
+    switch (connectionStatus) {
+      case ConnectionStatus.Connected:
+        return ['green', '在线'];
+      case ConnectionStatus.Connecting:
+      case ConnectionStatus.Idle:
+        return ['orange', '连接中'];
+      case ConnectionStatus.UnConnected:
+      default:
+        return ['red', '断开连接'];
+    }
+  };
 
   const keys = pathname.split('/');
   let selectedKey = '/' + (keys.find((key) => (key === 'message' || key === 'contact' || key === 'setting')) || '');
@@ -84,13 +112,18 @@ export default function MainLayout({
         }}
         theme='light'
       >
-        <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-          <Avatar
-            size={48}
-            src={user?.avatarUrl || ''}
-            style={{ marginBottom: '8px' }}
-          />
-        </div>
+        <Row style={{ textAlign: 'center', marginBottom: '16px' }}>
+          <Col span={24}>
+            <Avatar
+              size={48}
+              src={user?.avatarUrl || ''}
+              style={{ marginBottom: '8px' }}
+            />
+          </Col>
+          <Col span={24}>
+            <Tag color={getConnectionStatusTagColor()[0]}>{getConnectionStatusTagColor()[1]}</Tag>
+          </Col>
+        </Row>
         <Menu
           defaultSelectedKeys={[selectedKey]}
           items={items}
