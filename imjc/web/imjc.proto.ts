@@ -377,6 +377,10 @@ export default class WebIMJCManagerImpl implements IBaseIMJCManager {
     const message = new WebSocketMessage(event, payload);
   }
 
+  isConnectStatusChanged(status: ConnectionStatus) {
+    return this.connectionStatus !== status;
+  }
+
   async connect(userId: number, token: string) {
     let url = process.env.NEXT_PUBLIC_WS_BASE_URL as string;
     if (url[url.length - 1] == '/') url = url.substring(0, url.length - 1);
@@ -411,16 +415,33 @@ export default class WebIMJCManagerImpl implements IBaseIMJCManager {
       }
     }
     this.ws.onopen = (event) => {
+      console.log('onopen event: ', event);
+      if (this.isConnectStatusChanged(ConnectionStatus.Connected)) {
+        this.connectionStatus = ConnectionStatus.Connected;
+        this.eventEmitter.emit(EventType.CONNECTION_STATUS_CHANGED, ConnectionStatus.Connected);
+      }
     }
     this.ws.onerror = (event) => {
+      console.log('onerror event: ', event);
+      if (this.isConnectStatusChanged(ConnectionStatus.UnConnected)) {
+        this.connectionStatus = ConnectionStatus.UnConnected;
+        this.eventEmitter.emit(EventType.CONNECTION_STATUS_CHANGED, ConnectionStatus.UnConnected);
+      }
     }
     this.ws.onclose = (event) => {
+      console.log('onclose event: ', event);
+      this.connectionStatus = ConnectionStatus.UnConnected;
+      if (this.isConnectStatusChanged(ConnectionStatus.UnConnected)) {
+        this.connectionStatus = ConnectionStatus.UnConnected;
+        this.eventEmitter.emit(EventType.CONNECTION_STATUS_CHANGED, ConnectionStatus.UnConnected);
+      }
     }
   }
 
   async disconnect(userId: number, token: string) {
     if (this.ws) {
       this.ws.close();
+      this.connectionStatus = ConnectionStatus.UnConnected;
     }
   }
 }
