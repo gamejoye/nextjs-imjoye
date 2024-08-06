@@ -1,50 +1,32 @@
 'use client';
 
 import { ChatWindow } from "@/component/ChatWindow";
-import { useUser } from "@/hooks/global";
-import imjcManager from "@/imjc/imjc";
-import { ChatroomSummary } from "@/types/global";
-import { Result } from "antd";
+import { useQueryChatroomSummary } from "@/hooks/global";
+import { Result, Spin } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
 type Params = {
   id: string;
 }
 
 export default function ChatWindowPage() {
-  const { user } = useUser();
   const params = useParams<Params>();
   const id = params.id;
-  const isValidId = id.split('').every((ch) => ('0' <= ch && ch <= '9')) && parseInt(id) > 0;
-  const [summary, setSummary] = useState<ChatroomSummary | null>(null);
-  useEffect(() => {
-    if (!isValidId) return;
-    if (!user) return;
-    const fetchChatSummary = async () => {
-      const chatroomId = parseInt(id);
-      let found = true;
-      const summary = await imjcManager
-        .getChatroomSummaryFromRemote(
-          user.id,
-          chatroomId,
-          (err) => {
-            found = false;
-          },
-        );
-      setSummary(summary);
-    }
-    fetchChatSummary();
-  }, []);
-
-  if (!isValidId) return <ChatWindowNotFound />;
-  if (!summary) return <ChatWindowNotFound />;
-
+  const { status, summary } = useQueryChatroomSummary(id);
+  const isLoading = status === 'loading' || status === 'idle';
+  if (!summary && !isLoading) return <ChatWindowNotFound />;
   return (
-    <Content>
-      <ChatWindow summary={summary} />
-    </Content>
+    <Spin
+      style={{ width: '100vh', height: '100vh' }}
+      spinning={isLoading}
+      size={'large'}
+      delay={500}
+    >
+      <Content>
+        {summary === null ? null : <ChatWindow summary={summary} />}
+      </Content>
+    </Spin>
   )
 }
 
