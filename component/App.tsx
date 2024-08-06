@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import { UserInfoUtil } from "@/utils/userInfo";
 import { usePathname, useRouter } from "next/navigation";
 import imjcManager from "@/imjc/imjc";
-import { initClient } from "@/utils/client";
 import AuthLayout from "@/component/AuthLayout";
 import MainLayout from "@/component/MainLayout";
 import ThemeProvider from "@/component/ThemeProvider";
@@ -45,7 +44,7 @@ function Logic({
   const isAuthRoute = pathname.startsWith('/auth');
   useEffect(() => {
     const fetchUser = async () => {
-      const { userId, authenticatedToken } = await UserInfoUtil.getUserInfo();
+      const { userId, authenticatedToken } = UserInfoUtil.getUserInfo();
       if (!authenticatedToken) {
         router.push('/auth/login');
         return;
@@ -54,7 +53,7 @@ function Logic({
         let success = true;
         setStatus('loading');
         const user = await imjcManager.getUserFromRemote(userId, async (err) => {
-          await UserInfoUtil.deleteUserInfo();
+          UserInfoUtil.deleteUserInfo();
           message.error('获取用户信息失败，请重新登录！');
           router.push('/auth/login');
           setStatus('fail');

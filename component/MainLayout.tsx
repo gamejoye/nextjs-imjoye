@@ -3,13 +3,12 @@
 import { Avatar, Button, Col, Layout, Menu, MenuProps, Row, Tag } from 'antd';
 import useToken from 'antd/es/theme/useToken';
 import { LogoutOutlined, MessageOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode } from 'react';
 import { UserInfoUtil } from '@/utils/userInfo';
 import { usePathname, useRouter } from 'next/navigation';
 import { useUser } from '@/hooks/global';
-import eventEmitter from '@/imjc/emitter';
-import { EventType } from '@/imjc/constant/EventType';
 import ConnectionStatus from '@/imjc/constant/ConnectionStatus';
+import imjcManager from '@/imjc/imjc';
 
 const { Sider } = Layout;
 
@@ -57,26 +56,16 @@ export default function MainLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { user, setUser, setStatus } = useUser();
+  const { user, setUser, setStatus, connectionStatus } = useUser();
   const pathname = usePathname();
   const router = useRouter();
   const handleOnLogout = async () => {
-    await UserInfoUtil.deleteUserInfo();
+    UserInfoUtil.deleteUserInfo();
     setUser(null);
     setStatus('idle');
+    imjcManager.disconnect();
   }
   const { colorBorderSecondary } = useToken()[1];
-  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>(ConnectionStatus.Idle);
-
-  useEffect(() => {
-    const handleConnectStatusChanged = (status: ConnectionStatus) => {
-      setConnectionStatus(status);
-    };
-    eventEmitter.on(EventType.CONNECTION_STATUS_CHANGED, handleConnectStatusChanged);
-    return () => {
-      eventEmitter.off(EventType.CONNECTION_STATUS_CHANGED, handleConnectStatusChanged);
-    }
-  }, [user, connectionStatus, setConnectionStatus]);
 
   const handleOnSelect = ({ key }: { key: string }) => {
     router.push(key);
@@ -87,10 +76,10 @@ export default function MainLayout({
       case ConnectionStatus.Connected:
         return ['green', '在线'];
       case ConnectionStatus.Connecting:
-      case ConnectionStatus.Idle:
         return ['orange', '连接中'];
+      case ConnectionStatus.Idle:
+        return ['blue', '空闲'];
       case ConnectionStatus.UnConnected:
-      default:
         return ['red', '断开连接'];
     }
   };

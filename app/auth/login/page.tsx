@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, message, Layout, Typography } from 'antd';
 import appServerApi from "@/api/appServerApi";
-import { initClient } from '@/utils/client';
 import { isOk } from '@/api/web/issuccess';
 import { UserInfoUtil } from '@/utils/userInfo';
 import { useRouter } from 'next/navigation';
@@ -19,9 +18,6 @@ export default function Login() {
   const { setUser, setStatus } = useUser();
   const router = useRouter();
   const { colorBgContainer } = useToken()[1];
-  useEffect(() => {
-    initClient();
-  }, []);
   const onFinish = async (values: { password: string, email: string, }) => {
     setIsLoading(true);
     const res = await appServerApi.login({

@@ -1,26 +1,46 @@
+'use client';
+
 import { ChatWindow } from "@/component/ChatWindow";
+import { useUser } from "@/hooks/global";
 import imjcManager from "@/imjc/imjc";
-import { getUserInfo, initServer } from "@/utils/server";
+import { ChatroomSummary } from "@/types/global";
 import { Result } from "antd";
 import { Content } from "antd/es/layout/layout";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
-export default async function ChatWindowPage({ params }: { params: { id: string } }) {
-  initServer();
+type Params = {
+  id: string;
+}
+
+export default function ChatWindowPage() {
+  const { user } = useUser();
+  const params = useParams<Params>();
   const id = params.id;
   const isValidId = id.split('').every((ch) => ('0' <= ch && ch <= '9')) && parseInt(id) > 0;
+  const [summary, setSummary] = useState<ChatroomSummary | null>(null);
+  useEffect(() => {
+    if (!isValidId) return;
+    if (!user) return;
+    const fetchChatSummary = async () => {
+      const chatroomId = parseInt(id);
+      let found = true;
+      const summary = await imjcManager
+        .getChatroomSummaryFromRemote(
+          user.id,
+          chatroomId,
+          (err) => {
+            found = false;
+          },
+        );
+      setSummary(summary);
+    }
+    fetchChatSummary();
+  }, []);
+
   if (!isValidId) return <ChatWindowNotFound />;
-  const chatroomId = parseInt(id);
-  const userId = getUserInfo().userId;
-  let found = true;
-  const summary = await imjcManager
-    .getChatroomSummaryFromRemote(
-      userId,
-      chatroomId,
-      (err) => {
-        found = false;
-      },
-    );
-  if (!found) return <ChatWindowNotFound />;
+  if (!summary) return <ChatWindowNotFound />;
+
   return (
     <Content>
       <ChatWindow summary={summary} />

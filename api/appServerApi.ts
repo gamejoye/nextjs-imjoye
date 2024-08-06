@@ -1,13 +1,24 @@
+import { getWebAppServerApiImpl } from "@/factories/WebAppServerApiImpl.factory";
 import { paths } from "@/types/api";
 import { supportUploadWithFile } from "@/utils/platform";
+import { UserInfoUtil } from "@/utils/userInfo";
+import { IBaseAppServerApi } from "./web/interface/BaseAppServerApi.interface";
 
-export class AppServerApi {
-  self!: AppServerApi;
+export class AppServerApi implements IBaseAppServerApi {
+  _self!: IBaseAppServerApi;
 
   constructor() { }
 
-  init(self: AppServerApi) {
-    this.self = self;
+  get self(): IBaseAppServerApi {
+    if (!this._self) {
+      // TODO 识别不同平台
+      const userInfo = UserInfoUtil.getUserInfo();
+      this._self = getWebAppServerApiImpl(
+        userInfo.userId,
+        userInfo.authenticatedToken,
+      );
+    }
+    return this._self;
   }
 
   async uploadAvatar(

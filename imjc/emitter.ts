@@ -1,11 +1,17 @@
 import { IEventEmitter } from './interface/EventEmitter.interface';
 import { EventType } from './constant/EventType';
+import { getWebEventEmitter } from '@/factories/WebEventEmitter.factory';
 
-export class EventEmitter {
-  self!: IEventEmitter;
+export class EventEmitter implements IEventEmitter {
+  _self!: IEventEmitter;
 
-  init(self: IEventEmitter) {
-    this.self = self;
+  get self(): IEventEmitter {
+    if (!this._self) {
+      // TODO 识别不同平台
+      const webEventEmitter = getWebEventEmitter();
+      this._self = webEventEmitter;
+    }
+    return this._self;
   }
 
   emit(event: EventType, ...args: Object[]) {

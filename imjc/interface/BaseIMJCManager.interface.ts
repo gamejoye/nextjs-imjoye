@@ -1,11 +1,17 @@
 import { FriendInfo, User, Chatroom, ChatroomSummary, Message, FriendRequest } from '@/types/global';
+import ConnectionStatus from '../constant/ConnectionStatus';
 
 export interface IBaseIMJCManager {
+  /**
+   * 获取当前连接状态
+   * @returns
+   */
+  getConnectionStatus(): ConnectionStatus;
+
   /**
    * 用户连接
    * @param userId
    * @param token
-   * @returns
    * @returns
    */
   connect(
@@ -15,13 +21,9 @@ export interface IBaseIMJCManager {
 
   /**
    * 用户断开连接
-   * @param userId - 用户id
-   * @param token - 用户凭证
    * @returns
    */
   disconnect(
-    userId: number,
-    token: string,
   ): Promise<void>;
 
   /**

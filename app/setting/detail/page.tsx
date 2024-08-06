@@ -1,17 +1,12 @@
 'use client';
 
 import { useUser } from '@/hooks/global';
-import imjcManager from "@/imjc/imjc";
-import { initClient } from "@/utils/client";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Col, Form, Input, Row, Upload } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { useEffect, useState } from "react";
 
 export default function Detail() {
-  useEffect(() => {
-    initClient();
-  }, []);
   const { user } = useUser();
   const [imageUrl, setImageUrl] = useState<string | undefined>(user?.avatarUrl);
 

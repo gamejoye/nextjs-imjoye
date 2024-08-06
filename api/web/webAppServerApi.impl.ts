@@ -1,12 +1,11 @@
 import { UserInfoUtil } from "@/utils/userInfo";
-import { AppServerApi } from "../appServerApi";
+import { IBaseAppServerApi } from "./interface/BaseAppServerApi.interface";
 
-export class WebAppServerApiImpl extends AppServerApi {
+export class WebAppServerApiImpl implements IBaseAppServerApi {
   apiBaseUrl: string;
   userId: number;
   token: string;
   constructor(userId: number, token: string) {
-    super();
     let apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
     if (apiBaseUrl[apiBaseUrl.length - 1] !== '/') {
       apiBaseUrl += '/';
@@ -15,18 +14,14 @@ export class WebAppServerApiImpl extends AppServerApi {
     this.userId = userId;
     this.token = token;
   }
-
-  async __uploadWithUri<T>(
-    path: string,
-    name: string,
-    filename: string,
-    uri: string,
-    type: string,
-    data: Array<{
-      name: string,
-      value: string
-    }> = [],
-    options = {},
+  __uploadWithUri<T>(
+    path: string, 
+    name: string, 
+    filename: string, 
+    uri: string, 
+    type: string, 
+    data: Array<{ name: string; value: string; }>, 
+    options: object,
     onProgress?: (loaded: number, total: number) => void,
   ): Promise<T> {
     throw new Error('不支持通过Uri上传头像');

@@ -1,7 +1,6 @@
 'use client';
 
 import { useTheme } from "@/hooks/global";
-import { initClient } from "@/utils/client";
 import { Divider, Flex, Switch, Typography } from "antd";
 import { Content } from "antd/es/layout/layout";
 import Link from "next/link";
@@ -10,9 +9,6 @@ import { useEffect } from "react";
 const { Text, Title } = Typography;
 
 export default function Personality() {
-  useEffect(() => {
-    initClient();
-  }, []);
   const {theme, setTheme} = useTheme();
   const handleSwitchChange = (checked: boolean) => {
     if (checked) {

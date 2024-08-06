@@ -9,11 +9,12 @@ import { FriendRequest } from "@/types/global";
 import { showRelativeTime } from "@/utils/datetime";
 import { Avatar, Button, Card, Empty, List, Skeleton, Space, Typography, message } from "antd"
 import useToken from "antd/es/theme/useToken";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 const { Text } = Typography;
 
 type Props = {
   friendRequests: FriendRequest[],
+  setFriendRequests: (fqs: FriendRequest[]) => void
 }
 
 const fqSorter = (fq1: FriendRequest, fq2: FriendRequest) => {
@@ -24,25 +25,25 @@ const fqSorter = (fq1: FriendRequest, fq2: FriendRequest) => {
 };
 
 export function FriendRequestList({
-  friendRequests
+  friendRequests,
+  setFriendRequests,
 }: Props) {
   const { user, status } = useUser();
   const { colorSuccess, colorError } = useToken()[1];
   const isLoading = status === 'loading' || status === 'idle';
-  const [fqs, setFqs] = useState(friendRequests);
 
   useEffect(() => {
     const newFriendRequestHandle = (newFq: FriendRequest) => {
-      const newFqs = fqs.filter((fq) => fq.id !== newFq.id);
+      const newFqs = friendRequests.filter((fq) => fq.id !== newFq.id);
       newFqs.push(newFq);
       newFqs.sort(fqSorter);
-      setFqs(newFqs);
+      setFriendRequests(newFqs);
     };
     eventEmitter.on(EventType.NEW_FRIEND_REQUEST, newFriendRequestHandle);
     return () => {
       eventEmitter.off(EventType.NEW_FRIEND_REQUEST, newFriendRequestHandle);
     }
-  }, [fqs]);
+  }, [friendRequests, setFriendRequests]);
 
   const handleOnAccept = async (request: FriendRequest) => {
     if (!user) return;
@@ -55,10 +56,10 @@ export function FriendRequestList({
       }
     );
     if (success) {
-      const newFqs = fqs.filter((fq) => fq.id !== friendRequest.id);
+      const newFqs = friendRequests.filter((fq) => fq.id !== friendRequest.id);
       newFqs.push(friendRequest);
       newFqs.sort(fqSorter);
-      setFqs(newFqs);
+      setFriendRequests(newFqs);
     } else {
       message.error('处理好友请求失败');
     }
@@ -74,10 +75,10 @@ export function FriendRequestList({
       }
     );
     if (success) {
-      const newFqs = fqs.filter((fq) => fq.id !== friendRequest.id);
+      const newFqs = friendRequests.filter((fq) => fq.id !== friendRequest.id);
       newFqs.push(friendRequest);
       newFqs.sort(fqSorter);
-      setFqs(newFqs);
+      setFriendRequests(newFqs);
     } else {
       message.error('处理好友请求失败');
     }
@@ -88,7 +89,7 @@ export function FriendRequestList({
         padding: 8,
       }}
       itemLayout="horizontal"
-      dataSource={fqs}
+      dataSource={friendRequests}
       locale={{
         emptyText: (
           <Empty description="暂时还没有好友请求哦～" />

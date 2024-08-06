@@ -25,6 +25,9 @@ export default class WebIMJCManagerImpl implements IBaseIMJCManager {
     this.serverApi = serverApi;
     this.eventEmitter = eventEmitter;
   }
+  getConnectionStatus(): ConnectionStatus {
+    return this.connectionStatus;
+  }
 
   async sendFriendRequst(
     from: number,
@@ -415,22 +418,18 @@ export default class WebIMJCManagerImpl implements IBaseIMJCManager {
       }
     }
     this.ws.onopen = (event) => {
-      console.log('onopen event: ', event);
       if (this.isConnectStatusChanged(ConnectionStatus.Connected)) {
         this.connectionStatus = ConnectionStatus.Connected;
         this.eventEmitter.emit(EventType.CONNECTION_STATUS_CHANGED, ConnectionStatus.Connected);
       }
     }
     this.ws.onerror = (event) => {
-      console.log('onerror event: ', event);
       if (this.isConnectStatusChanged(ConnectionStatus.UnConnected)) {
         this.connectionStatus = ConnectionStatus.UnConnected;
         this.eventEmitter.emit(EventType.CONNECTION_STATUS_CHANGED, ConnectionStatus.UnConnected);
       }
     }
     this.ws.onclose = (event) => {
-      console.log('onclose event: ', event);
-      this.connectionStatus = ConnectionStatus.UnConnected;
       if (this.isConnectStatusChanged(ConnectionStatus.UnConnected)) {
         this.connectionStatus = ConnectionStatus.UnConnected;
         this.eventEmitter.emit(EventType.CONNECTION_STATUS_CHANGED, ConnectionStatus.UnConnected);
@@ -438,10 +437,9 @@ export default class WebIMJCManagerImpl implements IBaseIMJCManager {
     }
   }
 
-  async disconnect(userId: number, token: string) {
+  async disconnect() {
     if (this.ws) {
       this.ws.close();
-      this.connectionStatus = ConnectionStatus.UnConnected;
     }
   }
 }

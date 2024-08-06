@@ -1,14 +1,30 @@
 import { FriendRequest, Message } from '@/types/global';
 import { IBaseIMJCManager } from './interface/BaseIMJCManager.interface';
+import WebIMJCManagerImpl from './web/imjc.proto';
+import eventEmitter from './emitter';
+import appServerApi from '@/api/appServerApi';
+import ConnectionStatus from './constant/ConnectionStatus';
 
 /*
   * IMJoye Chat聊天模块
  */
 export class IMJCManager implements IBaseIMJCManager {
-  self!: IBaseIMJCManager;
+  private _self!: IBaseIMJCManager;
 
-  init(self: IBaseIMJCManager) {
-    this.self = self;
+  get self(): IBaseIMJCManager {
+    if (!this._self) {
+      // TODO 识别不同平台
+      const webImjcManager = new WebIMJCManagerImpl(
+        appServerApi,
+        eventEmitter,
+      );
+      this._self = webImjcManager;
+    }
+    return this._self;
+  }
+
+  getConnectionStatus(): ConnectionStatus {
+    return this.self.getConnectionStatus();
   }
 
   /**
@@ -51,12 +67,10 @@ export class IMJCManager implements IBaseIMJCManager {
 
   /**
    * 用户断开连接
-   * @param userId - 用户id
-   * @param token - 用户凭证
    * @returns
    */
-  disconnect(userId: number, token: string) {
-    return this.self.disconnect(userId, token);
+  disconnect() {
+    return this.self.disconnect();
   }
 
   /**

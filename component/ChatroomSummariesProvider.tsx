@@ -1,7 +1,6 @@
 import { Chatroom, ChatroomSummary } from '@/types/global';
 import { PropsWithChildren, createContext, useCallback, useEffect, useState } from 'react';
 import { useUser } from '@/hooks/global';
-import { useClient } from '@/hooks/global';
 import imjcManager from '@/imjc/imjc';
 import { message } from 'antd';
 
@@ -36,7 +35,6 @@ const summarySorter = (s1: ChatroomSummary, s2: ChatroomSummary) => {
 /// ------------------------------------------------------------
 
 const ChatroomSummariesProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  useClient();
   const { user } = useUser();
   const [currentChatroom, setCurrentChatroom] = useState<Chatroom | null>(null);
   const [summaries, setSummaries] = useState<ChatroomSummary[]>([]);

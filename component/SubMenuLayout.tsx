@@ -1,6 +1,5 @@
 'use client';
 
-import { initClient } from "@/utils/client";
 import { Layout, Menu, MenuProps, Typography } from "antd";
 import { Content, Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
@@ -29,9 +28,6 @@ export default function SubMenuLayout({
   const router = useRouter();
   const pathname = usePathname();
   const { colorBgContainer, colorBorderSecondary } = useToken()[1];
-  useEffect(() => {
-    initClient();
-  }, []);
   const handleOnSelect = ({ key }: { key: string }) => {
     router.push(key);
   }

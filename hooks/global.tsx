@@ -3,7 +3,6 @@ import { ThemeContext } from "@/component/ThemeProvider";
 import { UserContext } from "@/component/UserProvider";
 import imjcManager from "@/imjc/imjc";
 import { ChatroomSummary, Message, User } from "@/types/global";
-import { initClient } from "@/utils/client";
 import { getCurrentDatetime } from "@/utils/datetime";
 import { message } from "antd";
 import { useContext, useEffect, useState } from "react";
@@ -19,30 +18,20 @@ const messageSorter = (m1: Message, m2: Message) => {
   return t1 - t2;
 }
 
-export function useClient() {
-  useEffect(() => {
-    initClient();
-  }, []);
-}
-
 export const useTheme = () => {
-  useClient();
   return useContext(ThemeContext);
 };
 
 export function useUser() {
-  useClient();
   return useContext(UserContext);
 }
 
 
 export function useChatroomSummaries() {
-  useClient();
   return useContext(ChatroomSummariesContext);
 }
 
 export function useMessages(summary: ChatroomSummary) {
-  useClient();
   const { user, status } = useUser();
   const [queryStatus, setQueryStatus] = useState<Status>('idle');
   const [mutativeStatus, setMutativeStatus] = useState<Status>('idle');

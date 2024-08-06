@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Form, Input, Button, Upload, Avatar, message, Typography } from 'antd';
-import { initClient } from '@/utils/client';
 import { Content } from 'antd/es/layout/layout';
 import { RcFile, UploadChangeParam, UploadFile } from 'antd/es/upload';
 import appServerApi from '@/api/appServerApi';
@@ -19,10 +18,6 @@ export default function Register() {
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();
   const { colorBgContainer } = useToken()[1];
-
-  useEffect(() => {
-    initClient();
-  }, []);
 
   const onFinish = async ({
     email,
