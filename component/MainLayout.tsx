@@ -2,7 +2,7 @@
 
 import { Avatar, Button, Col, Layout, Menu, MenuProps, Row, Tag } from 'antd';
 import useToken from 'antd/es/theme/useToken';
-import { LogoutOutlined, MessageOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, LogoutOutlined, MessageOutlined, MinusCircleOutlined, SettingOutlined, SyncOutlined, UserOutlined } from '@ant-design/icons';
 import { ReactNode } from 'react';
 import { UserInfoUtil } from '@/utils/userInfo';
 import { usePathname, useRouter } from 'next/navigation';
@@ -71,18 +71,22 @@ export default function MainLayout({
     router.push(key);
   }
 
-  const getConnectionStatusTagColor = () => {
+  const getConnectionStatusBarStatus = () => {
     switch (connectionStatus) {
       case ConnectionStatus.Connected:
-        return ['green', '在线'];
+        return { icon: <CheckCircleOutlined />, color: 'green', label: '在线' };
       case ConnectionStatus.Connecting:
-        return ['orange', '连接中'];
+        return { icon: <SyncOutlined spin />, color: 'orange', label: '连接中' };
       case ConnectionStatus.Idle:
-        return ['blue', '空闲'];
+        return { icon: <ExclamationCircleOutlined />, color: 'blue', label: '空闲' };
       case ConnectionStatus.UnConnected:
-        return ['red', '断开连接'];
+        return { icon: <CloseCircleOutlined />, color: 'red', label: '断开连接' };
+      default:
+        return { icon: <MinusCircleOutlined />, color: 'default', label: '未知状态' };
     }
   };
+
+  const { icon, color, label } = getConnectionStatusBarStatus();
 
   const keys = pathname.split('/');
   let selectedKey = '/' + (keys.find((key) => (key === 'message' || key === 'contact' || key === 'setting')) || '');
@@ -110,7 +114,7 @@ export default function MainLayout({
             />
           </Col>
           <Col span={24}>
-            <Tag color={getConnectionStatusTagColor()[0]}>{getConnectionStatusTagColor()[1]}</Tag>
+            <Tag icon={icon} color={color}>{label}</Tag>
           </Col>
         </Row>
         <Menu
