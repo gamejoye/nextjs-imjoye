@@ -26,9 +26,52 @@ export function useUser() {
   return useContext(UserContext);
 }
 
-
 export function useChatroomSummaries() {
   return useContext(ChatroomSummariesContext);
+}
+
+export function useQueryChatroomSummary(id: number | string) {
+  if (typeof id === 'string') {
+    id = Number(id);
+  }
+  const { user } = useUser();
+  const { summaries } = useChatroomSummaries();
+  const [status, setStatus] = useState<Status>('idle');
+  const [summary, setSummary] = useState<ChatroomSummary | null>(null);
+  useEffect(() => {
+    if (!user) return;
+    if (Number.isNaN(id)) {
+      setStatus('fail');
+      return;
+    }
+    const summaryFromCache = summaries.find((s) => s.chatroom.id === id);
+    if (summaryFromCache) {
+      setStatus('success');
+      setSummary(summaryFromCache);
+      return;
+    }
+    const fetchChatSummary = async () => {
+      let found = true;
+      setStatus('loading');
+      const summary = await imjcManager
+        .getChatroomSummaryFromRemote(
+          user.id,
+          id,
+          (err) => {
+            found = false;
+          },
+        );
+      if (found) {
+        setStatus('success');
+        setSummary(summary);
+      } else {
+        setStatus('fail');
+      }
+      setSummary(summary);
+    }
+    fetchChatSummary();
+  }, []);
+  return { summary, status };
 }
 
 export function useMessages(summary: ChatroomSummary) {
