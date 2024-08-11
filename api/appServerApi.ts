@@ -44,6 +44,12 @@ export class AppServerApi implements IBaseAppServerApi {
     return this.__post('auth/register', body);
   }
 
+  async genEmailCode(
+    body: paths['/auth/email/code']['post']['requestBody']['content']['application/json'],
+  ): Promise<paths['/auth/email/code']['post']['responses']['201']['content']['application/json']> {
+    return this.__post('auth/email/code', body);
+  }
+
   async visitChatroom(
     path: paths['/chatrooms/{chatroomId}/visit']['put']['parameters']['path'],
     query: paths['/chatrooms/{chatroomId}/visit']['put']['parameters']['query'],
