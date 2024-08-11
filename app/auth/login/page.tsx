@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Form, Input, Button, message, Layout, Typography } from 'antd';
 import appServerApi from "@/api/appServerApi";
 import { isOk } from '@/api/web/issuccess';
@@ -10,6 +10,8 @@ import Link from 'next/link';
 import imjcManager from '@/imjc/imjc';
 import { useUser } from '@/hooks/global';
 import useToken from 'antd/es/theme/useToken';
+import { genLoginInfos } from '@/configs/auth/initLogin';
+import { RequiredProp } from '@/configs/auth/base.type';
 const { Content } = Layout;
 const { Text } = Typography;
 
@@ -18,6 +20,7 @@ export default function Login() {
   const { setUser, setStatus } = useUser();
   const router = useRouter();
   const { colorBgContainer } = useToken()[1];
+
   const onFinish = async (values: { password: string, email: string, }) => {
     setIsLoading(true);
     const res = await appServerApi.login({
@@ -30,7 +33,7 @@ export default function Login() {
       message.error(`登录失败: ${resMessage}`);
       return;
     }
-    await UserInfoUtil.storeUserInfo({
+    UserInfoUtil.storeUserInfo({
       userId: data.id,
       authenticatedToken: data.token,
     });
@@ -48,40 +51,64 @@ export default function Login() {
     setStatus('success');
   };
 
+  const loginInfos = genLoginInfos({ onSubmit: onFinish });
+
+  const genItems = (item: RequiredProp) => {
+    let Val;
+    if (item.type === 'input') {
+      Val = (
+        <Input
+          placeholder={item.placeholder}
+        />
+      );
+    } else if (item.type === 'input.password') {
+      Val = (<Input.Password />)
+    } else if (item.type === 'submit') {
+      Val = (
+        <Button
+          type="primary"
+          htmlType="submit"
+          style={{ width: '150px' }}
+          disabled={isLoading}
+        >
+          登录
+        </Button>
+      )
+    } else {
+      Val = null;
+    }
+    return Val;
+  }
+
   return (
     <Content style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '50px' }}>
-      <div style={{ width: '300px', padding: '24px', backgroundColor: colorBgContainer, borderRadius: '8px' }}>
-        <Text strong style={{ display: 'block', textAlign: 'center', fontSize: '20px', marginBottom: '24px', fontFamily: 'Roboto, sans-serif' }}>快速登录</Text>
+      <div style={{ width: '400px', padding: '24px', backgroundColor: colorBgContainer, borderRadius: '50px' }}>
+        <Text strong style={{ display: 'block', textAlign: 'center', fontSize: '20px', marginBottom: '24px', fontFamily: 'Roboto, sans-serif' }}>
+          👋 快速登录
+        </Text>
         <Form
+          labelCol={{ span: 6, }}
+          wrapperCol={{ span: 16 }}
           name="login"
           initialValues={{ remember: true }}
           onFinish={onFinish}
         >
-          <Form.Item
-            name="email"
-            rules={[{ required: true, message: '请输入邮箱!' }]}
-          >
-            <Input placeholder="请输入邮箱" />
-          </Form.Item>
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: '请输入密码!' }]}
-          >
-            <Input.Password placeholder="请输入密码" />
-          </Form.Item>
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              style={{ width: '100%' }}
-              disabled={isLoading}
-            >
-              立即登录
-            </Button>
-          </Form.Item>
+          {loginInfos.map((item, index) => {
+            return (
+              <Form.Item
+                name={item.name}
+                label={item.label}
+                key={index + ''}
+                rules={item.rules}
+                wrapperCol={ item.type === 'submit' ? { offset: 6, span: 18 } : undefined}
+              >
+                {genItems(item)}
+              </Form.Item>
+            )
+          })}
         </Form>
         <div style={{ textAlign: 'center', marginTop: '16px' }}>
-          <Link href="/auth/register" aria-disabled={isLoading}>还没有账号? 立即注册</Link>
+          <Link href="/auth/register" aria-disabled={isLoading}>还没有账号？🌟 立即注册</Link>
         </div>
       </div>
     </Content>
