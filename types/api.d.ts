@@ -39,14 +39,6 @@ export interface paths {
     /** 上传头像 */
     post: operations["UsersController_uploadAvatar"];
   };
-  "/auth/login": {
-    /** 用户登录 */
-    post: operations["AuthController_login"];
-  };
-  "/auth/register": {
-    /** 用户注册 */
-    post: operations["AuthController_register"];
-  };
   "/chatrooms/{chatroomId}/visit": {
     /** 更新用户对于聊天室的最后访问时间 */
     put: operations["ChatroomsController_visitChatroom"];
@@ -65,6 +57,18 @@ export interface paths {
   };
   "/chatrooms/summaries/{chatroomId}": {
     get: operations["ChatroomsController_getChatroomSummary"];
+  };
+  "/auth/login": {
+    /** 用户登录 */
+    post: operations["AuthController_login"];
+  };
+  "/auth/email/code": {
+    /** 发送邮箱验证码 */
+    post: operations["AuthController_postEmail"];
+  };
+  "/auth/register": {
+    /** 用户注册 */
+    post: operations["AuthController_register"];
   };
   "/messages": {
     /** 根据roomId获取消息 */
@@ -164,46 +168,6 @@ export interface components {
        */
       createTime: string;
     };
-    LoginVo: {
-      /** @description 用户id */
-      id: number;
-      /** @description 用户登录成功后的认证信息 */
-      token: string;
-    };
-    LoginUserRequestDto: {
-      /**
-       * @description 用户邮箱
-       * @example gamejoye@gmail.com
-       */
-      email: string;
-      /**
-       * @description 用户密码
-       * @example 147jkl...
-       */
-      password: string;
-    };
-    RegisterUserRequestDto: {
-      /**
-       * @description 用户名
-       * @example gamejoye
-       */
-      username: string;
-      /**
-       * @description 用户邮箱
-       * @example gamejoye@gmail.com
-       */
-      email: string;
-      /**
-       * @description 用户密码
-       * @example 147jkl...
-       */
-      password: string;
-      /**
-       * @description 用户头像
-       * @example https://gamejoye.top/static/media/bg.6885a3ed90df348b4f7a.jpeg
-       */
-      avatarUrl: string;
-    };
     ChatroomVo: {
       /**
        * @description 房间号
@@ -288,6 +252,65 @@ export interface components {
       chatroom: components["schemas"]["ChatroomVo"];
       /** @description 当前聊天室的最新一条消息 */
       latestMessage: components["schemas"]["MessageVo"];
+    };
+    LoginVo: {
+      /** @description 用户id */
+      id: number;
+      /** @description 用户登录成功后的认证信息 */
+      token: string;
+    };
+    LoginUserRequestDto: {
+      /**
+       * @description 用户邮箱
+       * @example gamejoye@gmail.com
+       */
+      email: string;
+      /**
+       * @description 用户密码
+       * @example 147jkl...
+       */
+      password: string;
+    };
+    PostEmailCodeVo: {
+      /**
+       * @description 验证码有效时间
+       * @example 60
+       */
+      validTime: number;
+    };
+    PostEmailCodeDto: {
+      /**
+       * @description 用户邮箱
+       * @example gamejoye@gmail.com
+       */
+      email: string;
+    };
+    RegisterUserRequestDto: {
+      /**
+       * @description 用户名
+       * @example gamejoye
+       */
+      username: string;
+      /**
+       * @description 用户邮箱
+       * @example gamejoye@gmail.com
+       */
+      email: string;
+      /**
+       * @description 验证码
+       * @example 189452
+       */
+      code: string;
+      /**
+       * @description 用户密码
+       * @example 147jkl...
+       */
+      password: string;
+      /**
+       * @description 用户头像
+       * @example https://gamejoye.top/static/media/bg.6885a3ed90df348b4f7a.jpeg
+       */
+      avatarUrl: string;
     };
     IAddMessageChatroomDto: {
       /** @description 待添加消息所属聊天室id */
@@ -562,54 +585,6 @@ export interface operations {
       };
     };
   };
-  /** 用户登录 */
-  AuthController_login: {
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["LoginUserRequestDto"];
-      };
-    };
-    responses: {
-      /** @description 登录成功 */
-      201: {
-        content: {
-          "application/json": components["schemas"]["ApiBaseResult"] & {
-            data: components["schemas"]["LoginVo"];
-          };
-        };
-      };
-      /** @description 登录失败 */
-      401: {
-        content: never;
-      };
-    };
-  };
-  /** 用户注册 */
-  AuthController_register: {
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["RegisterUserRequestDto"];
-      };
-    };
-    responses: {
-      /** @description 注册成功 */
-      201: {
-        content: {
-          "application/json": components["schemas"]["ApiBaseResult"] & {
-            data: components["schemas"]["UserVo"];
-          };
-        };
-      };
-      /** @description 注册失败 */
-      401: {
-        content: never;
-      };
-      /** @description 用户邮箱已经存在 */
-      409: {
-        content: never;
-      };
-    };
-  };
   /** 更新用户对于聊天室的最后访问时间 */
   ChatroomsController_visitChatroom: {
     parameters: {
@@ -729,6 +704,72 @@ export interface operations {
       };
       /** @description 未认证用户 */
       401: {
+        content: never;
+      };
+    };
+  };
+  /** 用户登录 */
+  AuthController_login: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["LoginUserRequestDto"];
+      };
+    };
+    responses: {
+      /** @description 登录成功 */
+      201: {
+        content: {
+          "application/json": components["schemas"]["ApiBaseResult"] & {
+            data: components["schemas"]["LoginVo"];
+          };
+        };
+      };
+      /** @description 登录失败 */
+      401: {
+        content: never;
+      };
+    };
+  };
+  /** 发送邮箱验证码 */
+  AuthController_postEmail: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PostEmailCodeDto"];
+      };
+    };
+    responses: {
+      /** @description 验证码成功发送 */
+      201: {
+        content: {
+          "application/json": components["schemas"]["ApiBaseResult"] & {
+            data: components["schemas"]["PostEmailCodeVo"];
+          };
+        };
+      };
+    };
+  };
+  /** 用户注册 */
+  AuthController_register: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RegisterUserRequestDto"];
+      };
+    };
+    responses: {
+      /** @description 注册成功 */
+      201: {
+        content: {
+          "application/json": components["schemas"]["ApiBaseResult"] & {
+            data: components["schemas"]["UserVo"];
+          };
+        };
+      };
+      /** @description 注册失败 */
+      401: {
+        content: never;
+      };
+      /** @description 用户邮箱已经存在 */
+      409: {
         content: never;
       };
     };
