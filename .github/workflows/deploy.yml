@@ -2,7 +2,7 @@ name: Deploy Next-IMJoye
 
 on:
   release:
-    types: [created]
+    types: [created, published]
   workflow_dispatch:  # 允许手动触发
 
 jobs:
