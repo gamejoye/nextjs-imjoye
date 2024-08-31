@@ -312,6 +312,15 @@ export interface components {
        */
       avatarUrl: string;
     };
+    PagingMessagesVo: {
+      /**
+       * @description 是否还有未获取的消息
+       * @example true
+       */
+      more: boolean;
+      /** @description 消息内容 */
+      messages: components["schemas"]["MessageVo"][];
+    };
     IAddMessageChatroomDto: {
       /** @description 待添加消息所属聊天室id */
       id: number;
@@ -783,6 +792,16 @@ export interface operations {
          * @example 2
          */
         room_id: number;
+        /**
+         * @description 最后一条消息的id
+         * @example 2
+         */
+        oldest_message_id?: number;
+        /**
+         * @description 拉取的消息的数量
+         * @example 2
+         */
+        page_size: number;
       };
     };
     responses: {
@@ -790,7 +809,7 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["ApiBaseResult"] & {
-            data: components["schemas"]["MessageVo"][];
+            data: components["schemas"]["PagingMessagesVo"];
           };
         };
       };

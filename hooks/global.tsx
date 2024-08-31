@@ -12,10 +12,7 @@ type Status = 'idle' | 'loading' | 'success' | 'fail';
 const checkLoading = (status: Status) => ['idle', 'loading'].some(s => s === status);
 
 const messageSorter = (m1: Message, m2: Message) => {
-  const t1 = new Date(m1.createTime).getTime();
-  const t2 = new Date(m2.createTime).getTime();
-  if (t1 === t2) return m1.id - m2.id;
-  return t1 - t2;
+  return m2.id - m1.id;
 }
 
 export const useTheme = () => {
@@ -74,8 +71,15 @@ export function useQueryChatroomSummary(id: number | string) {
   return { summary, status };
 }
 
-export function useMessages(summary: ChatroomSummary) {
+type UseMessagesOptions = {
+  pageSize?: number;
+}
+
+export function useMessages(summary: ChatroomSummary, options?: UseMessagesOptions) {
+  const { pageSize } = { pageSize: 10, ...(options || {}) };
   const { user, status } = useUser();
+  const [more, setMore] = useState(true);
+  const [fetchMoreStatus, setFetchMoreStatus] = useState<Status>('idle');
   const [queryStatus, setQueryStatus] = useState<Status>('idle');
   const [mutativeStatus, setMutativeStatus] = useState<Status>('idle');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -114,37 +118,62 @@ export function useMessages(summary: ChatroomSummary) {
     }
   }
 
-  const fetchMessages = async () => {
-    if (user === null) return;
-    setQueryStatus('loading');
+  const fetchMessages = async (first: boolean) => {
+    if (user === null || !more) return;
+    if (first) {
+      setQueryStatus('loading');
+    } else {
+      setFetchMoreStatus('loading');
+    }
     let found = true;
-    const messages = await imjcManager
+    const { more: newMore, messages: fetchedMessages } = await imjcManager
       .getMessagesFromRemote(
         user.id,
-        summary.chatroom.id,
+        {
+          chatroomId: summary.chatroom.id,
+          oldestMessageId: messages.length === 0 ? undefined : messages[messages.length - 1].id,
+          pageSize,
+        },
         (err) => {
           found = false;
         }
       );
     if (found) {
-      setQueryStatus('success');
-      setMessages([...messages.reverse()]);
+      setMore(newMore);
+      if (first) {
+        setQueryStatus('success');
+      } else {
+        setFetchMoreStatus('success');
+      }
+      setMessages([...fetchedMessages, ...messages].sort(messageSorter));
     } else {
-      setQueryStatus('fail');
+      if (first) {
+        setQueryStatus('fail');
+      } else {
+        setFetchMoreStatus('fail');
+      }
     }
   };
 
+  const fetchMore = async () => {
+    await fetchMessages(false);
+  }
+
   useEffect(() => {
-    fetchMessages();
+    fetchMessages(true);
   }, []);
 
   return {
     messages,
     send,
     setNewMessage,
+    more,
+    fetchMore,
+    isFetchMoreLoading: checkLoading(fetchMoreStatus),
+    isFetchMoreError: [status, queryStatus, fetchMoreStatus].includes('fail'),
     isQueryLoading: checkLoading(status) || checkLoading(queryStatus),
-    isQueryError: status === 'fail' || queryStatus === 'fail',
+    isQueryError: [status, queryStatus].includes('fail'),
     isMutativeLoading: checkLoading(status) || checkLoading(queryStatus) || checkLoading(mutativeStatus),
-    isMutativeError: status === 'fail' || queryStatus === 'fail' || mutativeStatus === 'fail',
+    isMutativeError: [status, queryStatus, mutativeStatus].includes('fail'),
   }
 }

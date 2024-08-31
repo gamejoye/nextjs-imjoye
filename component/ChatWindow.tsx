@@ -2,7 +2,7 @@
 
 import { MessageList, MessageListSkeleton } from "@/component/MessageList";
 import imjcManager from "@/imjc/imjc";
-import { Avatar, Button, Divider, Layout, message, Space } from "antd";
+import { Avatar, Button, Divider, Layout, message, Space, Spin } from "antd";
 import { Content, Footer, Header } from "antd/es/layout/layout";
 import useToken from "antd/es/theme/useToken";
 import Title from "antd/es/typography/Title";
@@ -10,7 +10,7 @@ import { useChatroomSummaries, useMessages } from "@/hooks/global";
 import { ChatroomSummary, Message } from "@/types/global";
 import { MessageOutlined, UploadOutlined, UserOutlined } from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
-import { KeyboardEvent, useEffect, useRef, useState } from "react";
+import { KeyboardEvent, useEffect, useState } from "react";
 import { useUser } from '@/hooks/global';
 import { getCurrentDatetime } from "@/utils/datetime";
 import eventEmitter from "@/imjc/emitter";
@@ -27,6 +27,8 @@ export function ChatWindow({
     messages,
     setNewMessage,
     send,
+    more: hasMore,
+    fetchMore: fetchMoreMessages,
     isQueryLoading,
   } = useMessages(summary);
   const {
@@ -38,7 +40,6 @@ export function ChatWindow({
   const { user } = useUser();
   const [content, setContent] = useState('');
   const { colorBgContainer, colorBorderSecondary } = useToken()[1];
-  const messageEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // messages 依赖项防止过期闭包
@@ -89,12 +90,6 @@ export function ChatWindow({
       setSummaries(updatedSummaries);
     }
   }, [isSummariesQueryLoading]);
-  useEffect(() => {
-    // 消息滑动
-    if (messageEndRef.current) {
-      messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages]);
   const handleOnSubmit = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     e.preventDefault();
     if (e.shiftKey) return;
@@ -116,12 +111,37 @@ export function ChatWindow({
           {summary.chatroom.name}
         </Title>
       </Header>
-      <Content style={{ padding: '16px', overflowY: 'auto', flex: 1 }}>
+      <Content
+        id="messagesContainer"
+        style={{
+          padding: '16px',
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column-reverse',
+        }}
+      >
         {isQueryLoading
           ? <MessageListSkeleton />
-          : <MessageList messages={messages} />
+          : <MessageList
+            next={fetchMoreMessages}
+            messages={messages}
+            hasMore={hasMore}
+            loader={
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+              }}>
+                <Spin delay={500} />
+              </div>
+            }
+            endMessage={
+              <p style={{ textAlign: "center", color: "#888" }}>
+                <b>没有更多消息了</b>
+              </p>
+            }
+            container="messagesContainer"
+          />
         }
-        <div ref={messageEndRef} />
       </Content>
       <Footer style={{ paddingLeft: 8, paddingRight: 8 }}>
         <Divider style={{ margin: 0 }} />

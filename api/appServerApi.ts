@@ -81,7 +81,11 @@ export class AppServerApi implements IBaseAppServerApi {
     query: paths['/messages']['get']['parameters']['query'],
   ): Promise<paths['/messages']['get']['responses']['200']['content']['application/json']> {
     const { room_id } = query;
-    return this.__get(`messages?room_id=${room_id}`);
+    let url = `messages?room_id=${room_id}&page_size=${query.page_size}`;
+    if (query.oldest_message_id !== undefined) {
+      url += `&oldest_message_id=${query.oldest_message_id}`;
+    }
+    return this.__get(url);
   }
 
   async createMessage(

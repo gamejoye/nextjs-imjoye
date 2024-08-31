@@ -4,6 +4,7 @@ import WebIMJCManagerImpl from './web/imjc.proto';
 import eventEmitter from './emitter';
 import appServerApi from '@/api/appServerApi';
 import ConnectionStatus from './constant/ConnectionStatus';
+import { GetMessagesQuery } from './types/IMJC.type';
 
 /*
   * IMJoye Chat聊天模块
@@ -76,31 +77,31 @@ export class IMJCManager implements IBaseIMJCManager {
   /**
    * 从本地获取消息
    * @param userId
-   * @param chatroomId
+   * @param query
    * @param failCB
    * @returns
    */
   getMessages(
     userId: number,
-    chatroomId: number,
+    query: GetMessagesQuery,
     failCB: (err: Error) => void,
   ) {
-    return this.self.getMessages(userId, chatroomId, failCB);
+    return this.self.getMessages(userId, query, failCB);
   }
 
   /**
    * 从服务器拉取消息
    * @param userId
-   * @param roomId
+   * @param query
    * @param failCB
    * @returns
    */
   getMessagesFromRemote(
     userId: number,
-    roomId: number,
+    query: GetMessagesQuery,
     failCB: (err: Error) => void,
   ) {
-    return this.self.getMessagesFromRemote(userId, roomId, failCB);
+    return this.self.getMessagesFromRemote(userId, query, failCB);
   }
 
   /**

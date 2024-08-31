@@ -11,6 +11,7 @@ import { getCurrentDatetime } from '@/utils/datetime';
 import { isCreated, isOk } from '@/api/web/issuccess';
 import { Chatroom, ChatroomSummary, FriendInfo, FriendRequest, Message, User } from '@/types/global';
 import { WebSocketEventType } from '../constant/WebSocketEventType';
+import { GetMessagesQuery, GetMessagesResult } from '../types/IMJC.type';
 
 export default class WebIMJCManagerImpl implements IBaseIMJCManager {
   connectionStatus: ConnectionStatus = ConnectionStatus.Idle;
@@ -175,31 +176,41 @@ export default class WebIMJCManagerImpl implements IBaseIMJCManager {
 
   async getMessages(
     userId: number,
-    chatroomId: number,
+    query: GetMessagesQuery,
     failCB: (err: Error) => void,
-  ): Promise<Message[]> {
+  ): Promise<GetMessagesResult> {
     try {
-      return [];
+      return {
+        more: false,
+        messages: [],
+      };
     } catch (err: any) {
       failCB(err);
-      return [];
+      return { more: false, messages: [] };
     }
   }
 
   async getMessagesFromRemote(
     userId: number,
-    roomId: number,
+    query: GetMessagesQuery,
     failCB: (err: Error) => void,
-  ): Promise<Message[]> {
+  ): Promise<GetMessagesResult> {
     try {
       const response = await fetchWithRetry(
-        () => (this.serverApi.requestMessages({ room_id: roomId })),
+        () => (this.serverApi.requestMessages({
+          room_id: query.chatroomId,
+          oldest_message_id: query.oldestMessageId,
+          page_size: query.pageSize,
+        })),
         ({ statusCode }) => isOk(statusCode),
       )
-      return response.data;
+      return {
+        more: response.data.more,
+        messages: response.data.messages,
+      };
     } catch (err: any) {
       failCB(err);
-      return [];
+      return { more: false, messages: [] };
     }
   }
 
